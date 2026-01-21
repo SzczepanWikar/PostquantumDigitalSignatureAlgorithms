@@ -48,7 +48,7 @@ namespace Core.PlatformImplementation
             _signingAlgorithm?.Dispose();
             _verifyingAlgorithm?.Dispose();
 
-            _signingAlgorithm = _verifyingAlgorithm = MLDsa.GenerateKey(MLDsaAlgorithm.MLDsa44);
+            _signingAlgorithm = _verifyingAlgorithm = MLDsa.GenerateKey(_mLDsaAlgorithm);
 
             return ExportKeys();
         }
