@@ -2,8 +2,8 @@
 {
     public static class DilithiumParametersProvider
     {
-        private static uint Q = 8380417;
-        private static uint Gamma2(byte mode) => mode switch
+        private static int Q = 8380417;
+        private static int Gamma2(byte mode) => mode switch
         {
             2 => (Q - 1) / 88,
             3 => (Q - 1) / 32,

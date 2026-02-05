@@ -5,20 +5,20 @@
         /// <summary>
         /// Modulus
         /// </summary>
-        public uint Q { get; }
+        public int Q { get; }
         /// <summary>
         /// Dropped bits from t
         /// </summary>
         public byte D { get; }
-        public uint Tau { get; }
+        public int Tau { get; }
         /// <summary>
         /// y coefficient range
         /// </summary>
-        public uint Gamma1 { get; }
+        public int Gamma1 { get; }
         /// <summary>
         /// Low-order rounding range
         /// </summary>
-        public uint Gamma2 { get; }
+        public int Gamma2 { get; }
         /// <summary>
         /// Dimensions of matrix A (k x l)
         /// </summary>
@@ -28,14 +28,14 @@
         /// </summary>
         public byte Eta { get; }
         public byte Omega { get; }
-        public uint Beta { get; }
+        public int Beta { get; }
 
         public DilithiumParameters(
-            uint q,
+            int q,
             byte d,
-            uint tau,
-            uint gamma1,
-            uint gamma2,
+            int tau,
+            int gamma1,
+            int gamma2,
             (byte k, byte l) aMatrixDimensions,
             byte eta,
             byte omega
