@@ -1,11 +1,10 @@
 ﻿using System.Collections;
 using System.Diagnostics;
-using System.Runtime.Intrinsics.Arm;
 using System.Security.Cryptography;
 
 namespace CrystalsDilithium
 {
-    public sealed class DilithiumFunctions
+    internal sealed class DilithiumFunctions
     {
         private readonly DilithiumParameters _parameters;
 
@@ -13,7 +12,23 @@ namespace CrystalsDilithium
         {
             _parameters = parameters;
         }
-        
+
+        public static int ModPlusMinus(int n, int m)
+        {
+            if ((m & (m - 1)) != 0)
+            {
+                throw new ArgumentException("Modulo must be a power of 2.", nameof(m));
+            }
+
+            int mod = n & (m - 1);
+            if (mod > (m >> 1))
+            {
+                mod -= m;
+            }
+
+            return mod;
+        }
+
         public short[] SampleInBall(byte[] seed) 
         {
             short[] c = new short[256];
@@ -54,20 +69,22 @@ namespace CrystalsDilithium
             return (r1, r0);
         }
 
-        public static int ModPlusMinus(int n, int m)
+        public (int r1, int r0) Decompose(int r, int alpha)
         {
-            if ((m & (m - 1)) != 0)
+            Debug.Assert(r >= 0, "Input must be non-negative.");
+            r = r % _parameters.Q;
+
+            int r0 = ModPlusMinus(r, alpha);
+
+            if (r - r0 == _parameters.Q - 1)
             {
-                throw new ArgumentException("Modulo must be a power of 2.", nameof(m));
+                return (0, r0 - 1);
             }
 
-            int mod = n & (m - 1); 
-            if (mod > (m >> 1))    
-            {
-                mod -= m;
-            }
+            int r1 = (r - r0) / alpha;
 
-            return mod;
+            return (r1, r0);
         }
+
     }
 }
