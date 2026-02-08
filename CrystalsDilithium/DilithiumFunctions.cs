@@ -7,10 +7,12 @@ namespace CrystalsDilithium
     internal sealed class DilithiumFunctions
     {
         private readonly DilithiumParameters _parameters;
+        private readonly int _m;
 
         public DilithiumFunctions(DilithiumParameters parameters)
         {
             _parameters = parameters;
+            _m = (_parameters.Q) / 2 * _parameters.Gamma2;
         }
 
         public static int ModPlusMinus(int n, int m)
@@ -29,7 +31,7 @@ namespace CrystalsDilithium
             return mod;
         }
 
-        public short[] SampleInBall(byte[] seed) 
+        public short[] SampleInBall(byte[] seed)
         {
             short[] c = new short[256];
             Array.Fill(c, (short)0);
@@ -43,7 +45,7 @@ namespace CrystalsDilithium
             for (int i = 256 - _parameters.Tau; i < 256; i++)
             {
                 int j = shake256.Read(1)[0];
-                
+
                 while (j > i)
                 {
                     j = shake256.Read(1)[0];
@@ -55,7 +57,7 @@ namespace CrystalsDilithium
 
             return c;
         }
-        
+
         public (int r1, int r0) Power2Round(int r)
         {
             Debug.Assert(r >= 0, "Input must be non-negative.");
@@ -68,6 +70,8 @@ namespace CrystalsDilithium
 
             return (r1, r0);
         }
+
+        public (int r1, int r0) Decompose(int r) => Decompose(r, 2 * _parameters.Gamma2);
 
         public (int r1, int r0) Decompose(int r, int alpha)
         {
@@ -86,5 +90,31 @@ namespace CrystalsDilithium
             return (r1, r0);
         }
 
+        public int HighBits(int r) => Decompose(r).r1;
+        public int LowBits(int r) => Decompose(r).r0;
+        public bool MakeHint(int r, int z)
+        {
+            int r1 = HighBits(r);
+            int v1 = HighBits(z);
+
+            return r1 != v1;
+        }
+
+        public int UseHint(bool h, int r)
+        {
+            (int r1, int r0) = Decompose(r);
+
+            if (!h)
+            {
+                return r1;
+            }
+
+            if (r0 > 0)
+            {
+                return (r1 + 1) % _m;
+            }
+
+            return (r1 - 1) % _m;
+        }
     }
 }
