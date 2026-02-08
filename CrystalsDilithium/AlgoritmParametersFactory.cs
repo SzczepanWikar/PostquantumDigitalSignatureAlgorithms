@@ -2,17 +2,15 @@
 {
     public static class DilithiumParametersProvider
     {
-        private static int Q = 8380417;
         private static int Gamma2(byte mode) => mode switch
         {
-            2 => (Q - 1) / 88,
-            3 => (Q - 1) / 32,
-            5 => (Q - 1) / 32,
+            2 => (DilithiumParameters.Q - 1) / 88,
+            3 => (DilithiumParameters.Q - 1) / 32,
+            5 => (DilithiumParameters.Q - 1) / 32,
             _ => throw new ArgumentOutOfRangeException(nameof(mode), "Invalid mode. Supported modes are 2, 3, and 5.")
         };
 
         public static DilithiumParameters SecurityLevel2Parameters => new(
-            q: Q,
             d: 13,
             tau: 39,
             gamma1: 1 << 17,
@@ -23,7 +21,6 @@
         );
 
         public static DilithiumParameters SecurityLevel3Parameters => new(
-            q: Q,
             d: 13,
             tau: 49,
             gamma1: 1 << 19,
@@ -34,7 +31,6 @@
         );
 
         public static DilithiumParameters SecurityLevel5Parameters => new(
-            q: Q,
             d: 13,
             tau: 60,
             gamma1: 1 << 19,

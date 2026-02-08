@@ -12,7 +12,7 @@ namespace CrystalsDilithium
         public DilithiumFunctions(DilithiumParameters parameters)
         {
             _parameters = parameters;
-            _m = (_parameters.Q) / 2 * _parameters.Gamma2;
+            _m = (DilithiumParameters.Q) / 2 * _parameters.Gamma2;
         }
 
         public static int ModPlusMinus(int n, int m)
@@ -61,7 +61,7 @@ namespace CrystalsDilithium
         public (int r1, int r0) Power2Round(int r)
         {
             Debug.Assert(r >= 0, "Input must be non-negative.");
-            r = r % _parameters.Q;
+            r = r % DilithiumParameters.Q;
 
             int TwoToPowerOfD = 1 << _parameters.D;
 
@@ -76,11 +76,11 @@ namespace CrystalsDilithium
         public (int r1, int r0) Decompose(int r, int alpha)
         {
             Debug.Assert(r >= 0, "Input must be non-negative.");
-            r = r % _parameters.Q;
+            r = r % DilithiumParameters.Q;
 
             int r0 = ModPlusMinus(r, alpha);
 
-            if (r - r0 == _parameters.Q - 1)
+            if (r - r0 == DilithiumParameters.Q - 1)
             {
                 return (0, r0 - 1);
             }

@@ -5,7 +5,7 @@
         /// <summary>
         /// Modulus
         /// </summary>
-        public int Q { get; }
+        public const int Q = 8380417;
         /// <summary>
         /// Dropped bits from t
         /// </summary>
@@ -31,7 +31,6 @@
         public int Beta { get; }
 
         public DilithiumParameters(
-            int q,
             byte d,
             int tau,
             int gamma1,
@@ -41,7 +40,6 @@
             byte omega
         )
         {
-            Q = q;
             D = d;
             Tau = tau;
             Gamma1 = gamma1;
