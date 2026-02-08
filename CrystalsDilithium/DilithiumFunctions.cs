@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Core.Helpers;
+using System.Collections;
 using System.Diagnostics;
 using System.Security.Cryptography;
 
@@ -52,7 +53,7 @@ namespace CrystalsDilithium
                 }
 
                 c[i] = c[j];
-                c[j] = (short)Math.Pow(-1, h[i + _parameters.Tau - 256] ? 1 : 0);
+                c[j] = (short)Math.Pow(-1, h[i + _parameters.Tau - 256].ToInt32());
             }
 
             return c;

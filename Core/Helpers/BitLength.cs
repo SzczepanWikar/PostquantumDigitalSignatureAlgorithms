@@ -1,0 +1,49 @@
+﻿namespace Core.Helpers
+{
+    public static class BitLength
+    {
+        private static readonly IReadOnlyList<byte> PrecomputedBitLengths = new byte[]
+        {
+            0,1,2,2,3,3,3,3,4,4,4,4,4,4,4,4,
+            5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
+            6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
+            6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
+            7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+            7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+            7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+            7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+            8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,
+            8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,
+            8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,
+            8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,
+            8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,
+            8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,
+            8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,
+            8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,
+        };
+
+        private static IReadOnlyDictionary<int, byte> PrecomputedValuesForSpecialNumbers = new Dictionary<int, byte>
+        {
+            { 8380417, 23 }
+        };
+
+        public static byte GetNumberBitLength(int number)
+        {
+            if (number < PrecomputedBitLengths.Count)
+            {
+                return PrecomputedBitLengths[number];
+            }
+
+            if (PrecomputedValuesForSpecialNumbers.TryGetValue(number, out byte precomputedBitLength))
+            {
+                return precomputedBitLength;
+            }
+
+            return CalculateBitLength(number);
+        }
+
+        public static byte GetBitLength(this int number) => GetNumberBitLength(number);
+
+        private static byte CalculateBitLength(int number) => (byte)(Math.Floor(Math.Log2(number)) + 1);
+    }
+}
