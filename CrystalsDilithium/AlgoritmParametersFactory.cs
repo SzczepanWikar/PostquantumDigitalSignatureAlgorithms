@@ -15,6 +15,7 @@
             tau: 39,
             gamma1: 1 << 17,
             gamma2: Gamma2(2),
+            lambda: 128,
             aMatrixDimensions: (k: 4, l: 4),
             eta: 2,
             omega: 80
@@ -25,6 +26,7 @@
             tau: 49,
             gamma1: 1 << 19,
             gamma2: Gamma2(3),
+            lambda: 192,
             aMatrixDimensions: (k: 6, l: 5),
             eta: 4,
             omega: 55
@@ -35,6 +37,7 @@
             tau: 60,
             gamma1: 1 << 19,
             gamma2: Gamma2(5),
+            lambda: 256,
             aMatrixDimensions: (k: 8, l: 7),
             eta: 4,
             omega: 75
