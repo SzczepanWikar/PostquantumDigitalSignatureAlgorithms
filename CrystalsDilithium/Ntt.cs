@@ -2,7 +2,7 @@
 {
     internal static class Ntt
     {
-        private static readonly int[] Zetas = new int[256]
+        private static readonly int[] Zetas =
         {
             0, 4808194, 3765607, 3761513, 5178923, 5496691, 5234739, 5178987,
             7778734, 3542485, 2682288, 2129892, 3764867, 7375178, 557458, 7159240,
