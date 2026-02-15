@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Security.Cryptography;
-using Core.Helpers;
 
 namespace CrystalsDilithium.Algorithms
 {

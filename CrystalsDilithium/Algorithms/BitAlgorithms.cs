@@ -4,7 +4,7 @@ using Core.Helpers;
 
 namespace CrystalsDilithium.Algorithms
 {
-    internal class BitAlgorithms
+    internal sealed class BitAlgorithms
     {
         private readonly DilithiumParameters _parameters;
 

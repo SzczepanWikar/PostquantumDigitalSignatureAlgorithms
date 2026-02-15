@@ -29,10 +29,23 @@ namespace CrystalsDilithium
             byte[] bytes = new byte[256];
             RandomNumberGenerator.Fill(bytes);
 
-            (byte[] pk, byte[] sk) = KeyGenInternal(bytes);
+            (byte[] pk, byte[] sk) = KeyGen(bytes);
 
             return (pk, sk);
         }
+
+        public (byte[] pk, byte[] sk) KeyGen(byte[] seed)
+        {
+            if (seed.Length != 256)
+            {
+                throw new ArgumentException("Seed must be 256 bytes long.");
+            }
+
+            (byte[] pk, byte[] sk) = KeyGenInternal(seed);
+
+            return (pk, sk);
+        }
+
 
         private (byte[] pk, byte[] sk) KeyGenInternal(byte[] ksi)
         {
