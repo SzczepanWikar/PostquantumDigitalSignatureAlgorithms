@@ -3,7 +3,7 @@ using System.Collections;
 using System.Diagnostics;
 using System.Security.Cryptography;
 
-namespace CrystalsDilithium
+namespace CrystalsDilithium.Algorithms
 {
     internal sealed class DilithiumFunctions
     {

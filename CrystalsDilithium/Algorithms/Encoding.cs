@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 
-namespace CrystalsDilithium
+namespace CrystalsDilithium.Algorithms
 {
     internal sealed class Encoding
     {

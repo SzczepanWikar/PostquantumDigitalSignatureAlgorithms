@@ -1,4 +1,4 @@
-﻿namespace CrystalsDilithium
+﻿namespace CrystalsDilithium.Algorithms
 {
     internal static class Ntt
     {

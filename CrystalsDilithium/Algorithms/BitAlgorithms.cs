@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Diagnostics;
 
-namespace CrystalsDilithium
+namespace CrystalsDilithium.Algorithms
 {
     internal class BitAlgorithms
     {
