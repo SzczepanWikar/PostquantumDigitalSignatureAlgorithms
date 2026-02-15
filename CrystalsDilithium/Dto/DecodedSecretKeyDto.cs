@@ -1,6 +1,6 @@
 ﻿namespace CrystalsDilithium.Dto
 {
-    public sealed record SignatureKeyDto(
+    public sealed record DecodedSecretKeyDto(
         byte[] Rho,
         byte[] K,
         byte[] Tr,

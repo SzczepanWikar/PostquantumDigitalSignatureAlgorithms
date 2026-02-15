@@ -62,7 +62,7 @@ namespace CrystalsDilithium.Algorithms
             return (rho, t1);
         }
 
-        public byte[] SkEncode(SignatureKeyDto dto)
+        public byte[] SkEncode(DecodedSecretKeyDto dto)
         {
             IEnumerable<byte> sk = dto.Rho.Concat(dto.K).Concat(dto.Tr);
 
@@ -86,7 +86,7 @@ namespace CrystalsDilithium.Algorithms
             return sk.ToArray();
         }
 
-        public SignatureKeyDto SkDecode(byte[] sk)
+        public DecodedSecretKeyDto SkDecode(byte[] sk)
         {
             int bitLenEta = BitLength.GetBitLength(2 * _parameters.Eta); // bitlen(2η)
             int yiBytes = 32 * bitLenEta / 8;

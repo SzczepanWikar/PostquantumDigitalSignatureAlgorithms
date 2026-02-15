@@ -62,7 +62,7 @@ namespace CrystalsDilithium
             byte[] pk = _encoding.PkEncode(rho, t1);
 
             byte[] tr = Shake256.HashData(pk, 64);
-            SignatureKeyDto skDto = new(Rho: rho, K: k, Tr: tr, S1: s1, S2: s2, T0: t0);
+            DecodedSecretKeyDto skDto = new(Rho: rho, K: k, Tr: tr, S1: s1, S2: s2, T0: t0);
 
             byte[] sk = _encoding.SkEncode(skDto);
 
