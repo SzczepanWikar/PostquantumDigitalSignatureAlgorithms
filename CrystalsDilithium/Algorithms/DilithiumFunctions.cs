@@ -31,6 +31,27 @@ namespace CrystalsDilithium.Algorithms
 
             return mod;
         }
+        public (int[][] r1, int[][] r0) Power2Round(int[][] r)
+        {
+            int[][] r1 = new int[r.Length][];
+            int[][] r0 = new int[r.Length][];
+
+            for(int i = 0; i < r.Length; i++)
+            {
+                if (r[i].Length != 256)
+                    throw new CryptographicException("Invalid polynomial length");
+
+                r1[i] = new int[r[i].Length];
+                r0[i] = new int[r[i].Length];
+
+                for(int j = 0; j < r[i].Length; j++)
+                {
+                    (r1[i][j], r0[i][j]) = Power2Round(r[i][j]);
+                }
+            }
+
+            return (r1, r0);
+        }
 
         public (int r1, int r0) Power2Round(int r)
         {

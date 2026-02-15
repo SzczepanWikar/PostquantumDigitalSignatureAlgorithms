@@ -29,13 +29,13 @@
             return cHat;
         }
 
-        public int[][] AddVectorNtt(int[] aHat, int[] bHat)
+        public int[][] AddVectorNtt(int[][] aHat, int[][] bHat)
         {
             int[][] uHat = new int[_parameters.AMatrixDimensions.L][];
 
             for (int i = 0; i < _parameters.AMatrixDimensions.L; i++)
             {
-                uHat[i] = AddNtt(aHat, bHat);
+                uHat[i] = AddNtt(aHat[i], bHat[i]);
             }
 
             return uHat;

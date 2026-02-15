@@ -40,6 +40,30 @@
 
         private const int F = 8347681;
 
+        public static int[][] ForwardNtt(int[][] w)
+        {
+            int[][] res = new int[w.Length][];
+
+            for(int i = 0; i < w.Length; i++)
+            {
+                res[i] = ForwardNtt(w[i]);
+            }
+
+            return res;
+        }
+
+        public static int[][] InverseNtt(int[][] wHat)
+        {
+            int[][] res = new int[wHat.Length][];
+
+            for (int i = 0; i < wHat.Length; i++)
+            {
+                res[i] = InverseNtt(wHat[i]);
+            }
+
+            return res;
+        }
+
         public static int[] ForwardNtt(int[] w)
         {
             int[] wHat = new int[w.Length];
