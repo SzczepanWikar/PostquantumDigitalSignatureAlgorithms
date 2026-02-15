@@ -1,12 +1,11 @@
-﻿
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 
 namespace Core.PlatformImplementation
 {
-#pragma warning disable SYSLIB5006 
+#pragma warning disable SYSLIB5006
     public sealed class Fips205Facade : IPostQuantumSignature, IDisposable
     {
-        private readonly static SlhDsaAlgorithm _slhDsaAlgorithm = SlhDsaAlgorithm.SlhDsaSha2_128s;
+        private static readonly SlhDsaAlgorithm _slhDsaAlgorithm = SlhDsaAlgorithm.SlhDsaSha2_128s;
 
         private SlhDsa? _signingAlgorithm;
         private SlhDsa? _verifyingAlgorithm;
@@ -21,13 +20,13 @@ namespace Core.PlatformImplementation
         {
             ArgumentNullException.ThrowIfNull(publicKey);
             ArgumentNullException.ThrowIfNull(privateKey);
-            
+
             if (publicKey.Length == 0)
                 throw new ArgumentException("Public key cannot be empty.", nameof(publicKey));
 
             if (privateKey.Length == 0)
                 throw new ArgumentException("Private key cannot be empty.", nameof(privateKey));
-         
+
             _verifyingAlgorithm = SlhDsa.ImportSlhDsaPublicKey(_slhDsaAlgorithm, publicKey);
             _signingAlgorithm = SlhDsa.ImportSlhDsaPrivateKey(_slhDsaAlgorithm, privateKey);
         }

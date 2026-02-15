@@ -5,6 +5,7 @@
         private readonly DilithiumParameters _parameters;
 
         public NttArithmetic(DilithiumParameters parameters) => _parameters = parameters;
+
         public int[] AddNtt(int[] aHat, int[] bHat)
         {
             int[] cHat = new int[256];
@@ -57,9 +58,9 @@
         {
             int[][] wHat = new int[_parameters.AMatrixDimensions.K][];
 
-            for(int i = 0; i < _parameters.AMatrixDimensions.K; i++)
+            for (int i = 0; i < _parameters.AMatrixDimensions.K; i++)
             {
-                for(int j = 0; j < _parameters.AMatrixDimensions.L; j++)
+                for (int j = 0; j < _parameters.AMatrixDimensions.L; j++)
                 {
                     wHat[i] = AddNtt(wHat[i], MultiplyNtt(MHat[i][j], vHat[j]));
                 }

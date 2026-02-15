@@ -1,9 +1,9 @@
-﻿using Core.Helpers;
-using CrystalsDilithium.Dto;
-using System.Collections;
+﻿using System.Collections;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
+using Core.Helpers;
+using CrystalsDilithium.Dto;
 
 namespace CrystalsDilithium.Algorithms
 {
@@ -19,7 +19,9 @@ namespace CrystalsDilithium.Algorithms
         public Encoding(DilithiumParameters parameters)
         {
             _parameters = parameters;
-            _precalcedBitlen = (byte)(BitLength.GetNumberBitLength(DilithiumParameters.Q - 1) - parameters.D);
+            _precalcedBitlen = (byte)(
+                BitLength.GetNumberBitLength(DilithiumParameters.Q - 1) - parameters.D
+            );
             _precalcedPowerOfTwo = (byte)(1 << _precalcedBitlen);
             _bitAlgorithms = new BitAlgorithms(parameters);
             _twoToPowerOfDMinusOne = (byte)(1 << (_parameters.D - 1));
@@ -40,7 +42,7 @@ namespace CrystalsDilithium.Algorithms
             return pk.ToArray();
         }
 
-        public (byte[] rho, int[][] t1) PkDecode(byte[] pk) 
+        public (byte[] rho, int[][] t1) PkDecode(byte[] pk)
         {
             byte[] rho = pk.Take(32).ToArray();
             int[][] t1 = new int[_parameters.AMatrixDimensions.K][];
@@ -75,10 +77,11 @@ namespace CrystalsDilithium.Algorithms
                 sk = sk.Concat(_bitAlgorithms.BitPack(s, _parameters.Eta, _parameters.Eta));
             }
 
-
             foreach (int[] s in dto.T0)
             {
-                sk = sk.Concat(_bitAlgorithms.BitPack(s, _twoToPowerOfDMinusOne - 1, _twoToPowerOfDMinusOne));
+                sk = sk.Concat(
+                    _bitAlgorithms.BitPack(s, _twoToPowerOfDMinusOne - 1, _twoToPowerOfDMinusOne)
+                );
             }
 
             return sk.ToArray();
@@ -86,7 +89,7 @@ namespace CrystalsDilithium.Algorithms
 
         public SignatureKeyDto SkDecode(byte[] sk)
         {
-            int bitLenEta = BitLength.GetBitLength(2 * _parameters.Eta);   // bitlen(2η)
+            int bitLenEta = BitLength.GetBitLength(2 * _parameters.Eta); // bitlen(2η)
             int yiBytes = 32 * bitLenEta / 8;
             int wiBytes = 32 * _parameters.D / 8;
 
@@ -132,11 +135,14 @@ namespace CrystalsDilithium.Algorithms
                 Buffer.BlockCopy(sk, offset, wi, 0, wiBytes);
                 offset += wiBytes;
 
-
-                t0[i] = _bitAlgorithms.BitUnpack(wi, _twoToPowerOfDMinusOne - 1, _twoToPowerOfDMinusOne);
+                t0[i] = _bitAlgorithms.BitUnpack(
+                    wi,
+                    _twoToPowerOfDMinusOne - 1,
+                    _twoToPowerOfDMinusOne
+                );
             }
 
-            return new (rho, K, tr, s1, s2, t0);
+            return new(rho, K, tr, s1, s2, t0);
         }
 
         public byte[] SigEncode(SignatureDto dto)
@@ -157,7 +163,11 @@ namespace CrystalsDilithium.Algorithms
 
             for (int i = 0; i < l; i++)
             {
-                byte[] zi = _bitAlgorithms.BitPack(dto.Z[i], _parameters.Gamma1 - 1, _parameters.Gamma1);
+                byte[] zi = _bitAlgorithms.BitPack(
+                    dto.Z[i],
+                    _parameters.Gamma1 - 1,
+                    _parameters.Gamma1
+                );
                 Buffer.BlockCopy(zi, 0, sigma, offset, zi.Length);
                 offset += zi.Length;
             }
@@ -166,7 +176,6 @@ namespace CrystalsDilithium.Algorithms
             return sigma;
         }
 
-
         public SignatureDto SigDecode(byte[] sigma)
         {
             int l = _parameters.AMatrixDimensions.L;
@@ -174,7 +183,7 @@ namespace CrystalsDilithium.Algorithms
 
             int ziBytes = 32 * bitLen / 8;
             int cBytes = _parameters.Lambda / 4;
-            int hintBytes = _parameters.Omega + _parameters.AMatrixDimensions.K; 
+            int hintBytes = _parameters.Omega + _parameters.AMatrixDimensions.K;
 
             int offset = 0;
 
@@ -199,7 +208,7 @@ namespace CrystalsDilithium.Algorithms
 
             IList<BitArray>? h = _bitAlgorithms.HintBitUnpack(hintBytesArr);
 
-            if(h == null)
+            if (h == null)
             {
                 throw new Exception("Invalid hint");
             }
@@ -234,6 +243,5 @@ namespace CrystalsDilithium.Algorithms
 
             return w1hat;
         }
-
     }
 }

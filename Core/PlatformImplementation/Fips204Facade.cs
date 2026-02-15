@@ -1,11 +1,10 @@
-﻿
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 
 namespace Core.PlatformImplementation
 {
     public sealed class Fips204Facade : IPostQuantumSignature, IDisposable
     {
-        private readonly static MLDsaAlgorithm _mLDsaAlgorithm = MLDsaAlgorithm.MLDsa44;
+        private static readonly MLDsaAlgorithm _mLDsaAlgorithm = MLDsaAlgorithm.MLDsa44;
         private MLDsa? _signingAlgorithm;
         private MLDsa? _verifyingAlgorithm;
         private bool _disposed = false;
@@ -20,16 +19,15 @@ namespace Core.PlatformImplementation
             ArgumentNullException.ThrowIfNull(publicKey);
             ArgumentNullException.ThrowIfNull(privateKey);
 
-            if(publicKey.Length == 0)
+            if (publicKey.Length == 0)
                 throw new ArgumentException("Public key cannot be empty.", nameof(publicKey));
 
-            if(privateKey.Length == 0)
+            if (privateKey.Length == 0)
                 throw new ArgumentException("Private key cannot be empty.", nameof(privateKey));
 
-            _verifyingAlgorithm =  MLDsa.ImportMLDsaPublicKey(_mLDsaAlgorithm, publicKey);
-            _signingAlgorithm =  MLDsa.ImportMLDsaPrivateKey(_mLDsaAlgorithm, privateKey);    
+            _verifyingAlgorithm = MLDsa.ImportMLDsaPublicKey(_mLDsaAlgorithm, publicKey);
+            _signingAlgorithm = MLDsa.ImportMLDsaPrivateKey(_mLDsaAlgorithm, privateKey);
         }
-
 
         public (byte[] PublicKey, byte[] PrivateKey) ExportKeys()
         {

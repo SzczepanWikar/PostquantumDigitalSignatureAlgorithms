@@ -1,16 +1,18 @@
-﻿using Core.Helpers;
-using System.Collections;
+﻿using System.Collections;
 using System.Diagnostics;
+using Core.Helpers;
 
 namespace CrystalsDilithium.Algorithms
 {
     internal class BitAlgorithms
     {
         private readonly DilithiumParameters _parameters;
+
         public BitAlgorithms(DilithiumParameters parameters)
         {
             _parameters = parameters;
         }
+
         public BitArray IntegerToBits(int x, int alpha)
         {
             Debug.Assert(x >= 0, "Input must be non-negative.");
@@ -25,7 +27,10 @@ namespace CrystalsDilithium.Algorithms
         {
             Debug.Assert(y.Length > 0, "Bit array must not be empty.");
             Debug.Assert(alpha > 0, "Bit length must be positive.");
-            Debug.Assert(y.Length >= alpha, "Bit array length must be at least as long as the specified bit length.");
+            Debug.Assert(
+                y.Length >= alpha,
+                "Bit array length must be at least as long as the specified bit length."
+            );
 
             int result = 0;
 
@@ -172,11 +177,11 @@ namespace CrystalsDilithium.Algorithms
             {
                 for (byte j = 0; j <= byte.MaxValue; j++)
                 {
-                    if(h[i][j] == false)
+                    if (h[i][j] == false)
                     {
                         continue;
                     }
-                    
+
                     y[index] = j;
                     index++;
                 }
@@ -189,8 +194,8 @@ namespace CrystalsDilithium.Algorithms
         public IList<BitArray>? HintBitUnpack(byte[] y)
         {
             BitArray[] h = new BitArray[_parameters.AMatrixDimensions.K];
-            
-            for(byte i = 0; i < h.Count(); i++)
+
+            for (byte i = 0; i < h.Count(); i++)
             {
                 h[i] = new BitArray(256);
             }
@@ -199,19 +204,19 @@ namespace CrystalsDilithium.Algorithms
 
             for (int i = 0; i < h.Count(); i++)
             {
-                if(y[_parameters.Omega + i] < index)
+                if (y[_parameters.Omega + i] < index)
                 {
                     return null;
                 }
 
-                if(y[_parameters.Omega + i] > _parameters.Omega)
+                if (y[_parameters.Omega + i] > _parameters.Omega)
                 {
                     return null;
                 }
 
                 byte first = index;
 
-                while(index < y[_parameters.Omega + i])
+                while (index < y[_parameters.Omega + i])
                 {
                     if (y[index] >= first)
                     {
@@ -224,7 +229,7 @@ namespace CrystalsDilithium.Algorithms
                 }
             }
 
-            for(byte i = index; i < _parameters.Omega; i++)
+            for (byte i = index; i < _parameters.Omega; i++)
             {
                 if (y[i] != 0)
                 {

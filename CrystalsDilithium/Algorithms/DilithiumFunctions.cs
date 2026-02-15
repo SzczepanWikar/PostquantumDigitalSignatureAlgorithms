@@ -1,7 +1,7 @@
-﻿using Core.Helpers;
-using System.Collections;
+﻿using System.Collections;
 using System.Diagnostics;
 using System.Security.Cryptography;
+using Core.Helpers;
 
 namespace CrystalsDilithium.Algorithms
 {
@@ -31,12 +31,13 @@ namespace CrystalsDilithium.Algorithms
 
             return mod;
         }
+
         public (int[][] r1, int[][] r0) Power2Round(int[][] r)
         {
             int[][] r1 = new int[r.Length][];
             int[][] r0 = new int[r.Length][];
 
-            for(int i = 0; i < r.Length; i++)
+            for (int i = 0; i < r.Length; i++)
             {
                 if (r[i].Length != 256)
                     throw new CryptographicException("Invalid polynomial length");
@@ -44,7 +45,7 @@ namespace CrystalsDilithium.Algorithms
                 r1[i] = new int[r[i].Length];
                 r0[i] = new int[r[i].Length];
 
-                for(int j = 0; j < r[i].Length; j++)
+                for (int j = 0; j < r[i].Length; j++)
                 {
                     (r1[i][j], r0[i][j]) = Power2Round(r[i][j]);
                 }
@@ -86,7 +87,9 @@ namespace CrystalsDilithium.Algorithms
         }
 
         public int HighBits(int r) => Decompose(r).r1;
+
         public int LowBits(int r) => Decompose(r).r0;
+
         public bool MakeHint(int r, int z)
         {
             int r1 = HighBits(r);

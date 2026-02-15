@@ -6,27 +6,33 @@
         /// Modulus
         /// </summary>
         public const int Q = 8380417;
+
         /// <summary>
         /// Dropped bits from t
         /// </summary>
         public byte D { get; }
         public int Tau { get; }
+
         /// <summary>
         /// collision strength of c wave
         /// </summary>
         public int Lambda { get; }
+
         /// <summary>
         /// y coefficient range
         /// </summary>
         public int Gamma1 { get; }
+
         /// <summary>
         /// Low-order rounding range
         /// </summary>
         public int Gamma2 { get; }
+
         /// <summary>
         /// Dimensions of matrix A (k x l)
         /// </summary>
         public (byte K, byte L) AMatrixDimensions { get; }
+
         /// <summary>
         /// Secret key range
         /// </summary>
