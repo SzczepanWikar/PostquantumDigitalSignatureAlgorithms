@@ -18,9 +18,16 @@ namespace CrystalsDilithium.Algorithms
             Debug.Assert(x >= 0, "Input must be non-negative.");
             Debug.Assert(alpha > 0, "Bit length must be positive.");
 
-            IEnumerable<bool> bits = new BitArray(new[] { x }).Cast<bool>().Take(alpha);
+            int xPrim = x;
+            BitArray y = new BitArray(alpha);
 
-            return new BitArray(bits.ToArray());
+            for (int i = 0; i < alpha; i++)
+            {
+                y[i] = xPrim % 2 == 1;
+                xPrim = xPrim / 2;
+            }
+
+            return y;
         }
 
         public int BitsToInteger(BitArray y, int alpha)
@@ -34,9 +41,9 @@ namespace CrystalsDilithium.Algorithms
 
             int result = 0;
 
-            for (int i = 0; i < alpha; i++)
+            for (int i = 1; i <= alpha; i++)
             {
-                result = 2 * result + (y[i].ToInt32());
+                result = 2 * result + y[alpha - i].ToInt32();
             }
 
             return result;
@@ -61,8 +68,9 @@ namespace CrystalsDilithium.Algorithms
         {
             Debug.Assert(y.Length > 0, "Bit array must not be empty.");
 
-            int byteCount = y.Length / 8;
+            int byteCount = (y.Length + 7) / 8;
             byte[] bytes = new byte[byteCount];
+            Array.Fill(bytes, (byte)0);
 
             for (int i = 0; i < y.Length; i++)
             {
@@ -111,29 +119,36 @@ namespace CrystalsDilithium.Algorithms
         public byte[] SimpleBitPack(int[] w, int b)
         {
             Debug.Assert(w.Length > 0, "Input array must not be empty.");
-            Debug.Assert(b > 0, "Bit length must be positive.");
+            Debug.Assert(b > 0, "b must be positive.");
+
+            byte bitLength = b.GetBitLength();
 
             BitArray bits = new(0);
 
-            for (int i = 0; i < 255; i++)
+            for (int i = 0; i < 256; i++)
             {
-                bits = BitArrayHelpers.Concat(bits, IntegerToBits(w[i], b.GetBitLength()));
+                bits = BitArrayHelpers.Concat(bits, IntegerToBits(w[i], bitLength));
             }
 
-            return BitsToBytes(bits);
+            byte[] res = BitsToBytes(bits);
+
+            return res;
         }
 
         public byte[] BitPack(int[] w, int a, int b)
         {
             Debug.Assert(w.Length > 0, "Input array must not be empty.");
 
+            byte bitLength = (a + b).GetBitLength();
             BitArray bits = new(0);
-            for (int i = 0; i < 255; i++)
+
+            for (int i = 0; i < 256; i++)
             {
-                bits = BitArrayHelpers.Concat(bits, IntegerToBits(w[i], (a + b).GetBitLength()));
+                bits = BitArrayHelpers.Concat(bits, IntegerToBits(b - w[i], bitLength));
             }
 
-            return BitsToBytes(bits);
+            byte[] res = BitsToBytes(bits);
+            return res;
         }
 
         public int[] SimpleBitUnpack(byte[] v, int b)
@@ -143,7 +158,7 @@ namespace CrystalsDilithium.Algorithms
 
             int[] w = new int[256];
 
-            for (int i = 0; i < 255; i++)
+            for (int i = 0; i < 256; i++)
             {
                 w[i] = UnpackCoefficient(c, z, i);
             }
@@ -158,7 +173,7 @@ namespace CrystalsDilithium.Algorithms
 
             int[] w = new int[256];
 
-            for (int i = 0; i < 255; i++)
+            for (int i = 0; i < 256; i++)
             {
                 w[i] = b - UnpackCoefficient(c, z, i);
             }
@@ -218,7 +233,7 @@ namespace CrystalsDilithium.Algorithms
 
                 while (index < y[_parameters.Omega + i])
                 {
-                    if (y[index] >= first)
+                    if (index > first && y[index - 1] >= y[index])
                     {
                         return null;
                     }

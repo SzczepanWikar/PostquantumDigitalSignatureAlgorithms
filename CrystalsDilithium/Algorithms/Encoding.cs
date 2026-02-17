@@ -9,8 +9,8 @@ namespace CrystalsDilithium.Algorithms
     internal sealed class Encoding
     {
         private readonly byte _precalcedBitlen;
-        private readonly byte _precalcedPowerOfTwo;
-        private readonly byte _twoToPowerOfDMinusOne;
+        private readonly int _precalcedPowerOfTwo;
+        private readonly int _twoToPowerOfDMinusOne;
 
         private readonly DilithiumParameters _parameters;
         private readonly BitAlgorithms _bitAlgorithms;
@@ -21,24 +21,27 @@ namespace CrystalsDilithium.Algorithms
             _precalcedBitlen = (byte)(
                 BitLength.GetNumberBitLength(DilithiumParameters.Q - 1) - parameters.D
             );
-            _precalcedPowerOfTwo = (byte)(1 << _precalcedBitlen);
+            _precalcedPowerOfTwo = 1 << _precalcedBitlen;
             _bitAlgorithms = new BitAlgorithms(parameters);
-            _twoToPowerOfDMinusOne = (byte)(1 << (_parameters.D - 1));
+            _twoToPowerOfDMinusOne = 1 << (_parameters.D - 1);
         }
 
         public byte[] PkEncode(byte[] rho, int[][] t1)
         {
             Debug.Assert(rho.Length == 32, "Rho must be 32 bytes long.");
 
-            IEnumerable<byte> pk = new byte[32];
-            pk = pk.Concat(rho);
+            byte[] pk = new byte[32];
+            Buffer.BlockCopy(rho, 0, pk, 0, 32);
 
             for (int i = 0; i < _parameters.AMatrixDimensions.K; i++)
             {
-                pk = pk.Concat(_bitAlgorithms.SimpleBitPack(t1[i], _precalcedPowerOfTwo - 1));
+                pk = ByteArrayHelpers.ConcatBytes(
+                    pk,
+                    _bitAlgorithms.SimpleBitPack(t1[i], _precalcedPowerOfTwo - 1)
+                );
             }
 
-            return pk.ToArray();
+            return pk;
         }
 
         public (byte[] rho, int[][] t1) PkDecode(byte[] pk)
@@ -56,7 +59,7 @@ namespace CrystalsDilithium.Algorithms
                 Buffer.BlockCopy(pk, offset, zi, 0, ziBytes);
                 offset += ziBytes;
 
-                t1[i] = _bitAlgorithms.SimpleBitUnpack(zi, _precalcedBitlen);
+                t1[i] = _bitAlgorithms.SimpleBitUnpack(zi, _precalcedPowerOfTwo - 1);
             }
 
             return (rho, t1);
@@ -64,21 +67,28 @@ namespace CrystalsDilithium.Algorithms
 
         public byte[] SkEncode(DecodedSecretKeyDto dto)
         {
-            IEnumerable<byte> sk = dto.Rho.Concat(dto.K).Concat(dto.Tr);
+            byte[] sk = ByteArrayHelpers.ConcatBytes(dto.Rho, dto.K, dto.Tr);
 
             foreach (int[] s in dto.S1)
             {
-                sk = sk.Concat(_bitAlgorithms.BitPack(s, _parameters.Eta, _parameters.Eta));
+                sk = ByteArrayHelpers.ConcatBytes(
+                    sk,
+                    _bitAlgorithms.BitPack(s, _parameters.Eta, _parameters.Eta)
+                );
             }
 
             foreach (int[] s in dto.S2)
             {
-                sk = sk.Concat(_bitAlgorithms.BitPack(s, _parameters.Eta, _parameters.Eta));
+                sk = ByteArrayHelpers.ConcatBytes(
+                    sk,
+                    _bitAlgorithms.BitPack(s, _parameters.Eta, _parameters.Eta)
+                );
             }
 
             foreach (int[] s in dto.T0)
             {
-                sk = sk.Concat(
+                sk = ByteArrayHelpers.ConcatBytes(
+                    sk,
                     _bitAlgorithms.BitPack(s, _twoToPowerOfDMinusOne - 1, _twoToPowerOfDMinusOne)
                 );
             }
@@ -106,17 +116,17 @@ namespace CrystalsDilithium.Algorithms
             Buffer.BlockCopy(sk, offset, tr, 0, 64);
             offset += 64;
 
-            int[][] s1 = new int[_parameters.AMatrixDimensions.K][];
+            int[][] s1 = new int[_parameters.AMatrixDimensions.L][];
             int[][] s2 = new int[_parameters.AMatrixDimensions.K][];
             int[][] t0 = new int[_parameters.AMatrixDimensions.K][];
 
-            for (int i = 0; i < _parameters.AMatrixDimensions.K; i++)
+            for (int i = 0; i < _parameters.AMatrixDimensions.L; i++)
             {
                 byte[] yi = new byte[yiBytes];
                 Buffer.BlockCopy(sk, offset, yi, 0, yiBytes);
                 offset += yiBytes;
 
-                s1[i] = _bitAlgorithms.BitUnpack(yi, bitLenEta, _parameters.Eta);
+                s1[i] = _bitAlgorithms.BitUnpack(yi, _parameters.Eta, _parameters.Eta);
             }
 
             for (int i = 0; i < _parameters.AMatrixDimensions.K; i++)
@@ -125,7 +135,7 @@ namespace CrystalsDilithium.Algorithms
                 Buffer.BlockCopy(sk, offset, zi, 0, yiBytes);
                 offset += yiBytes;
 
-                s2[i] = _bitAlgorithms.BitUnpack(zi, bitLenEta, _parameters.Eta);
+                s2[i] = _bitAlgorithms.BitUnpack(zi, _parameters.Eta, _parameters.Eta);
             }
 
             for (int i = 0; i < _parameters.AMatrixDimensions.K; i++)
@@ -201,15 +211,19 @@ namespace CrystalsDilithium.Algorithms
                 z[i] = _bitAlgorithms.BitUnpack(zi, _parameters.Gamma1 - 1, _parameters.Gamma1);
             }
 
-            int remaining = sigma.Length - offset;
-            byte[] hintBytesArr = new byte[remaining];
-            Buffer.BlockCopy(sigma, offset, hintBytesArr, 0, remaining);
+            if (sigma.Length - offset != hintBytes)
+            {
+                throw new CryptographicException("Invalid signature length");
+            }
+
+            byte[] hintBytesArr = new byte[hintBytes];
+            Buffer.BlockCopy(sigma, offset, hintBytesArr, 0, hintBytes);
 
             IList<BitArray>? h = _bitAlgorithms.HintBitUnpack(hintBytesArr);
 
             if (h == null)
             {
-                throw new Exception("Invalid hint");
+                throw new CryptographicException("Invalid hint");
             }
 
             return new(cWave, z, h);
@@ -232,7 +246,9 @@ namespace CrystalsDilithium.Algorithms
                 foreach (int coeff in w1[i])
                 {
                     if (coeff < 0 || coeff > max)
+                    {
                         throw new CryptographicException("w1 coefficient out of range");
+                    }
                 }
 
                 byte[] packed = _bitAlgorithms.SimpleBitPack(w1[i], max);

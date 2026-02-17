@@ -16,10 +16,10 @@ namespace CrystalsDilithium.Algorithms
             _bitAlgorithms = new BitAlgorithms(parameters);
         }
 
-        public short[] SampleInBall(byte[] rho)
+        public int[] SampleInBall(byte[] rho)
         {
-            short[] c = new short[256];
-            Array.Fill(c, (short)0);
+            int[] c = new int[256];
+            Array.Fill(c, 0);
 
             using Shake256 shake256 = new();
             shake256.AppendData(rho);
@@ -37,7 +37,7 @@ namespace CrystalsDilithium.Algorithms
                 }
 
                 c[i] = c[j];
-                c[j] = (short)Math.Pow(-1, h[i + _parameters.Tau - 256].ToInt32());
+                c[j] = h[i + _parameters.Tau - 256] ? -1 : 1;
             }
 
             return c;
@@ -47,14 +47,14 @@ namespace CrystalsDilithium.Algorithms
         {
             short j = 0;
 
-            using Shake256 shake256 = new();
-            shake256.AppendData(rho);
+            using Shake128 shake = new();
+            shake.AppendData(rho);
 
             int[] aDash = new int[256];
 
             while (j < 256)
             {
-                byte[] s = shake256.Read(3);
+                byte[] s = shake.Read(3);
                 int? coeff = _bitAlgorithms.CoeffFromThreeBytes(s[0], s[1], s[2]);
 
                 if (coeff.HasValue)
@@ -106,8 +106,8 @@ namespace CrystalsDilithium.Algorithms
             {
                 for (int s = 0; s < _parameters.AMatrixDimensions.L; s++)
                 {
-                    byte[] rhoPrim = rho.Concat(_bitAlgorithms.IntegerToBytes(r, 1))
-                        .Concat(_bitAlgorithms.IntegerToBytes(s, 1))
+                    byte[] rhoPrim = rho.Concat(_bitAlgorithms.IntegerToBytes(s, 1))
+                        .Concat(_bitAlgorithms.IntegerToBytes(r, 1))
                         .ToArray();
 
                     aHat[r][s] = RejNTTPoly(rhoPrim);
@@ -124,12 +124,20 @@ namespace CrystalsDilithium.Algorithms
 
             for (int r = 0; r < _parameters.AMatrixDimensions.L; r++)
             {
-                s1[r] = RejBoundedPoly(rho.Concat(_bitAlgorithms.IntegerToBytes(r, 1)).ToArray());
+                byte[] bytes = ByteArrayHelpers.ConcatBytes(
+                    rho,
+                    _bitAlgorithms.IntegerToBytes(r, 2)
+                );
+                s1[r] = RejBoundedPoly(bytes);
             }
 
             for (int r = 0; r < _parameters.AMatrixDimensions.K; r++)
             {
-                s2[r] = RejBoundedPoly(rho.Concat(_bitAlgorithms.IntegerToBytes(r, 1)).ToArray());
+                byte[] bytes = ByteArrayHelpers.ConcatBytes(
+                    rho,
+                    _bitAlgorithms.IntegerToBytes(r + _parameters.AMatrixDimensions.L, 2)
+                );
+                s2[r] = RejBoundedPoly(bytes);
             }
 
             return (s1, s2);
@@ -137,18 +145,19 @@ namespace CrystalsDilithium.Algorithms
 
         public int[][] ExpandMask(byte[] rho, int mi)
         {
-            Debug.Assert(mi > 0, "Mask index must be positive.");
+            Debug.Assert(mi >= 0, "Mask index must be non negative.");
 
             int[][] y = new int[_parameters.AMatrixDimensions.L][];
             int c = 1 + BitLength.GetNumberBitLength(_parameters.Gamma1 - 1);
 
             for (int r = 0; r < _parameters.AMatrixDimensions.L; r++)
             {
-                byte[] rhoPrim = rho.Concat(_bitAlgorithms.IntegerToBytes(mi, 1))
-                    .Concat(_bitAlgorithms.IntegerToBytes(r, 1))
-                    .ToArray();
+                byte[] rhoPrim = ByteArrayHelpers.ConcatBytes(
+                    rho,
+                    _bitAlgorithms.IntegerToBytes(mi +  r, 2)
+                );
 
-                byte[] v = Shake256.HashData(rhoPrim, c);
+                byte[] v = Shake256.HashData(rhoPrim, 32 * c);
                 y[r] = _bitAlgorithms.BitUnpack(v, _parameters.Gamma1 - 1, _parameters.Gamma1);
             }
 

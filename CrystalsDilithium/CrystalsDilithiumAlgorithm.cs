@@ -46,7 +46,6 @@ namespace CrystalsDilithium
             return (pk, sk);
         }
 
-
         private (byte[] pk, byte[] sk) KeyGenInternal(byte[] ksi)
         {
             (byte[] rho, byte[] rhoPrim, byte[] k) = ExtraxtDataFromSeed(ksi);

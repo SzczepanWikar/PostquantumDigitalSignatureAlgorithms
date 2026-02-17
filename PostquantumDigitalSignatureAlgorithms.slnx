@@ -2,4 +2,5 @@
   <Project Path="D:/programowanie/PostquantumDigitalSignatureAlgorithms/Core/Core.csproj" />
   <Project Path="D:/programowanie/PostquantumDigitalSignatureAlgorithms/CrystalsDilithium/CrystalsDilithium.csproj" Id="5d1a63f4-7fb4-42b8-b12a-7d4dd806efae" />
   <Project Path="D:/programowanie/PostquantumDigitalSignatureAlgorithms/PostquantumDigitalSignatureAlgorithms/PostquantumDigitalSignatureAlgorithms.csproj" />
+  <Project Path="DilithiumTests/DilithiumTests.csproj" Id="8b3763a5-964d-43cf-a0f0-01e5db0c5b95" />
 </Solution>

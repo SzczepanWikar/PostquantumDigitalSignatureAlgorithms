@@ -54,7 +54,6 @@ namespace CrystalsDilithium.Algorithms
 
         public (int r1, int r0) Power2Round(int r)
         {
-            Debug.Assert(r >= 0, "Input must be non-negative.");
             r = r % DilithiumParameters.Q;
 
             int TwoToPowerOfD = 1 << _parameters.D;

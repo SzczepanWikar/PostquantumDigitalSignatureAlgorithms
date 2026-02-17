@@ -1,8 +1,11 @@
-﻿namespace CrystalsDilithium.Algorithms
+﻿using Core.Helpers;
+
+namespace CrystalsDilithium.Algorithms
 {
     internal sealed class NttArithmetic
     {
         private readonly DilithiumParameters _parameters;
+        private readonly RingArithmetic _ringArithmetic = new(DilithiumParameters.Q);
 
         public NttArithmetic(DilithiumParameters parameters) => _parameters = parameters;
 
@@ -12,7 +15,7 @@
 
             for (int i = 0; i < 256; i++)
             {
-                cHat[i] = aHat[i] + bHat[i];
+                cHat[i] = _ringArithmetic.Add(aHat[i], bHat[i]); // aHat[i] + bHat[i];
             }
 
             return cHat;
@@ -24,7 +27,7 @@
 
             for (int i = 0; i < 256; i++)
             {
-                cHat[i] = aHat[i] * bHat[i];
+                cHat[i] = _ringArithmetic.Multiply(aHat[i], bHat[i]); // aHat[i] * bHat[i];
             }
 
             return cHat;
@@ -54,15 +57,18 @@
             return wHat;
         }
 
-        public int[][] MatrixVectorNtt(int[][][] MHat, int[][] vHat)
+        public int[][] MatrixVectorNtt(int[][][] mHat, int[][] vHat)
         {
             int[][] wHat = new int[_parameters.AMatrixDimensions.K][];
 
             for (int i = 0; i < _parameters.AMatrixDimensions.K; i++)
             {
+                wHat[i] = new int[256];
+                Array.Fill(wHat[i], 0);
+
                 for (int j = 0; j < _parameters.AMatrixDimensions.L; j++)
                 {
-                    wHat[i] = AddNtt(wHat[i], MultiplyNtt(MHat[i][j], vHat[j]));
+                    wHat[i] = AddNtt(wHat[i], MultiplyNtt(mHat[i][j], vHat[j]));
                 }
             }
 

@@ -329,13 +329,13 @@
             int start,
                 len = 128;
 
-            while (len >= 1)
+            while (len < 256)
             {
                 start = 0;
                 while (start < 256)
                 {
                     m--;
-                    int z = Zetas[m];
+                    int z = -Zetas[m];
 
                     for (int j = start; j < start + len - 1; j++)
                     {
