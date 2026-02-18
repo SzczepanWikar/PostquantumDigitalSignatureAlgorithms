@@ -7,6 +7,11 @@
 
         public static byte GetNumberBitLength(int number)
         {
+            if(number < 0)
+            {
+                throw new ArgumentOutOfRangeException("number"); 
+            }
+
             if (number < PrecomputedBitLengths.Count)
             {
                 return PrecomputedBitLengths[number];

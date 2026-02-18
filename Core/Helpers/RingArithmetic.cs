@@ -28,7 +28,7 @@
         /// <summary>
         /// (a - b) mod q
         /// </summary>
-        public int Substract(int a, int b)
+        public int Subtract(int a, int b)
         {
             int r = a - b;
 
