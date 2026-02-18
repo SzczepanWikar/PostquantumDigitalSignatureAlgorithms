@@ -13,6 +13,15 @@
         }
 
         /// <summary>
+        /// Math modulo (floor division): result always ∈ [0, m−1].
+        /// </summary>
+        public static int FloorMod(long n, int m)
+        {
+            int r = (int)(n % m);
+            return r < 0 ? r + m : r;
+        }
+
+        /// <summary>
         /// Modulo in centered ring arithmetic
         /// </summary>
         /// <param name="n"></param>

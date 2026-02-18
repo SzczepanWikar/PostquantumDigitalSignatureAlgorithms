@@ -1,4 +1,6 @@
-﻿namespace CrystalsDilithium.Algorithms
+﻿using Core.Helpers;
+
+namespace CrystalsDilithium.Algorithms
 {
     internal static class Ntt
     {
@@ -308,9 +310,9 @@
 
                     for (int j = start; j < start + len; j++)
                     {
-                        int t = (z * wHat[j + len]) % DilithiumParameters.Q;
-                        wHat[j + len] = (wHat[j] - t) % DilithiumParameters.Q;
-                        wHat[j] = (wHat[j] + t) % DilithiumParameters.Q;
+                        int t = Modulo.FloorMod((long)z * wHat[j + len], DilithiumParameters.Q);
+                        wHat[j + len] = Modulo.FloorMod(wHat[j] - t, DilithiumParameters.Q);
+                        wHat[j] = Modulo.FloorMod(wHat[j] + t, DilithiumParameters.Q);
                     }
                     start += 2 * len;
                 }
@@ -327,7 +329,7 @@
 
             short m = 256;
             int start,
-                len = 128;
+                len = 1;
 
             while (len < 256)
             {
@@ -337,22 +339,22 @@
                     m--;
                     int z = -Zetas[m];
 
-                    for (int j = start; j < start + len - 1; j++)
+                    for (int j = start; j < start + len; j++)
                     {
                         int t = w[j];
-                        w[j] = (t + w[j + len]) % DilithiumParameters.Q;
-                        w[j + len] = (t - w[j + len]) % DilithiumParameters.Q;
-                        w[j + len] = (z * w[j + len]) % DilithiumParameters.Q;
+                        w[j] = Modulo.FloorMod((long)t + w[j + len], DilithiumParameters.Q);
+                        w[j + len] = Modulo.FloorMod(t - w[j + len], DilithiumParameters.Q);
+                        w[j + len] = Modulo.FloorMod((long)z * w[j + len], DilithiumParameters.Q);
                     }
 
                     start += 2 * len;
                 }
                 len = 2 * len;
+            }
 
-                for (int j = 0; j < 256; j++)
-                {
-                    w[j] = (w[j] * F) % DilithiumParameters.Q;
-                }
+            for (int j = 0; j < 256; j++)
+            {
+                w[j] = Modulo.FloorMod((long)w[j] * F, DilithiumParameters.Q);
             }
 
             return w;
