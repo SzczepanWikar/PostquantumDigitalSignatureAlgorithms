@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using Core.Helpers;
+using System.Diagnostics;
 using System.Security.Cryptography;
 
 namespace CrystalsDilithium.Algorithms
@@ -11,23 +12,7 @@ namespace CrystalsDilithium.Algorithms
         public DilithiumFunctions(DilithiumParameters parameters)
         {
             _parameters = parameters;
-            _m = (DilithiumParameters.Q) / 2 * _parameters.Gamma2;
-        }
-
-        public static int ModPlusMinus(int n, int m)
-        {
-            if ((m & (m - 1)) != 0)
-            {
-                throw new ArgumentException("Modulo must be a power of 2.", nameof(m));
-            }
-
-            int mod = n & (m - 1);
-            if (mod > (m >> 1))
-            {
-                mod -= m;
-            }
-
-            return mod;
+            _m = (DilithiumParameters.Q - 1) / (2 * _parameters.Gamma2);
         }
 
         public (int[][] r1, int[][] r0) Power2Round(int[][] r)
@@ -58,7 +43,7 @@ namespace CrystalsDilithium.Algorithms
 
             int TwoToPowerOfD = 1 << _parameters.D;
 
-            int r0 = ModPlusMinus(r, TwoToPowerOfD);
+            int r0 = Modulo.ModPlusMinus(r, TwoToPowerOfD);
             int r1 = (r - r0) / TwoToPowerOfD;
 
             return (r1, r0);
@@ -71,7 +56,7 @@ namespace CrystalsDilithium.Algorithms
             Debug.Assert(r >= 0, "Input must be non-negative.");
             r = r % DilithiumParameters.Q;
 
-            int r0 = ModPlusMinus(r, alpha);
+            int r0 = Modulo.ModPlusMinus(r, alpha);
 
             if (r - r0 == DilithiumParameters.Q - 1)
             {
@@ -90,7 +75,7 @@ namespace CrystalsDilithium.Algorithms
         public bool MakeHint(int r, int z)
         {
             int r1 = HighBits(r);
-            int v1 = HighBits(z);
+            int v1 = HighBits(r + z);
 
             return r1 != v1;
         }
@@ -109,7 +94,7 @@ namespace CrystalsDilithium.Algorithms
                 return (r1 + 1) % _m;
             }
 
-            return (r1 - 1) % _m;
+            return Modulo.FloorMod(r1 - 1, _m);
         }
     }
 }

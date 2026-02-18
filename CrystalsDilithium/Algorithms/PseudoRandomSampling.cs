@@ -154,7 +154,7 @@ namespace CrystalsDilithium.Algorithms
             {
                 byte[] rhoPrim = ByteArrayHelpers.ConcatBytes(
                     rho,
-                    _bitAlgorithms.IntegerToBytes(mi +  r, 2)
+                    _bitAlgorithms.IntegerToBytes(mi + r, 2)
                 );
 
                 byte[] v = Shake256.HashData(rhoPrim, 32 * c);
