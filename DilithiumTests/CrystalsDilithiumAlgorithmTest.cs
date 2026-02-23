@@ -28,7 +28,7 @@ namespace DilithiumTests
                 MLDsa signingReferenceAlgorithm = MLDsa.ImportMLDsaPrivateKey(mlDsaAlgorithm, sk);
 
                 // Act
-                byte[] message = Encoding.UTF8.GetBytes("interop-test");
+                byte[] message = Encoding.UTF8.GetBytes("Document");
 
                 byte[] signature = signingReferenceAlgorithm.SignData(message);
 
