@@ -46,7 +46,7 @@
                 gamma2: Gamma2(5),
                 lambda: 256,
                 aMatrixDimensions: (k: 8, l: 7),
-                eta: 4,
+                eta: 2,
                 omega: 75
             );
     }

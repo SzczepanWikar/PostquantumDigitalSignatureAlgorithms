@@ -33,11 +33,11 @@ namespace CrystalsDilithium.Algorithms
             return cHat;
         }
 
-        public int[][] AddVectorNtt(int[][] aHat, int[][] bHat)
+        public int[][] AddVectorNtt(int l, int[][] aHat, int[][] bHat)
         {
-            int[][] uHat = new int[_parameters.AMatrixDimensions.L][];
+            int[][] uHat = new int[l][];
 
-            for (int i = 0; i < _parameters.AMatrixDimensions.L; i++)
+            for (int i = 0; i < l; i++)
             {
                 uHat[i] = AddNtt(aHat[i], bHat[i]);
             }
@@ -45,11 +45,11 @@ namespace CrystalsDilithium.Algorithms
             return uHat;
         }
 
-        public int[][] ScalarVectorNtt(int[] cHat, int[][] vHat)
+        public int[][] ScalarVectorNtt(int l, int[] cHat, int[][] vHat)
         {
-            int[][] wHat = new int[_parameters.AMatrixDimensions.L][];
+            int[][] wHat = new int[l][];
 
-            for (int i = 0; i < _parameters.AMatrixDimensions.L; i++)
+            for (int i = 0; i < l; i++)
             {
                 wHat[i] = MultiplyNtt(cHat, vHat[i]);
             }
@@ -64,7 +64,6 @@ namespace CrystalsDilithium.Algorithms
             for (int i = 0; i < _parameters.AMatrixDimensions.K; i++)
             {
                 wHat[i] = new int[256];
-                Array.Fill(wHat[i], 0);
 
                 for (int j = 0; j < _parameters.AMatrixDimensions.L; j++)
                 {

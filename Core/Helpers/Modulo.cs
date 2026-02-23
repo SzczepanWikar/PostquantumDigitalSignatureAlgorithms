@@ -2,7 +2,6 @@
 {
     public static class Modulo
     {
-
         /// <summary>
         /// Math modulo (floor division): result always ∈ [0, m−1].
         /// </summary>

@@ -7,6 +7,7 @@ namespace CrystalsDilithium
 {
     public sealed class CrystalsDilithiumAlgorithm
     {
+        private const byte _seedLength = 32;
         private readonly DilithiumParameters _parameters;
         private readonly BitAlgorithms _bitAlgorithms;
         private readonly PseudoRandomSampling _pseudoRandomSampling;
@@ -26,7 +27,7 @@ namespace CrystalsDilithium
 
         public (byte[] pk, byte[] sk) KeyGen()
         {
-            byte[] bytes = new byte[256];
+            byte[] bytes = new byte[_seedLength];
             RandomNumberGenerator.Fill(bytes);
 
             (byte[] pk, byte[] sk) = KeyGen(bytes);
@@ -36,9 +37,9 @@ namespace CrystalsDilithium
 
         public (byte[] pk, byte[] sk) KeyGen(byte[] seed)
         {
-            if (seed.Length != 256)
+            if (seed.Length != _seedLength)
             {
-                throw new ArgumentException("Seed must be 256 bytes long.");
+                throw new ArgumentException($"Seed must be {_seedLength} bytes long.");
             }
 
             (byte[] pk, byte[] sk) = KeyGenInternal(seed);
@@ -95,7 +96,7 @@ namespace CrystalsDilithium
             int[][] s1Dash = Ntt.ForwardNtt(s1);
             int[][] product = _nttArithmetic.MatrixVectorNtt(aDash, s1Dash);
             int[][] reversedNtt = Ntt.InverseNtt(product);
-            int[][] t = _nttArithmetic.AddVectorNtt(reversedNtt, s2);
+            int[][] t = _nttArithmetic.AddVectorNtt(s2.Length, reversedNtt, s2);
 
             return t;
         }
