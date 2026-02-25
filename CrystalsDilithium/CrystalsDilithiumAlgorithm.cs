@@ -2,7 +2,6 @@
 using Core.Helpers;
 using CrystalsDilithium.Algorithms;
 using CrystalsDilithium.Algorithms.Operations;
-using CrystalsDilithium.Dto;
 
 namespace CrystalsDilithium
 {

@@ -13,9 +13,33 @@ namespace CrystalsDilithium.Algorithms
         {
             int[] cHat = new int[256];
 
-            for (int i = 0; i < 256; i++)
+            for (int i = 0; i < cHat.Length; i++)
             {
                 cHat[i] = _ringArithmetic.Add(aHat[i], bHat[i]); // aHat[i] + bHat[i];
+            }
+
+            return cHat;
+        }
+
+        public int[] SubtractNtt(int[] aHat, int[] bHat)
+        {
+            int[] cHat = new int[256];
+
+            for (int i = 0; i < cHat.Length; i++)
+            {
+                cHat[i] = _ringArithmetic.Subtract(aHat[i], bHat[i]);
+            }
+
+            return cHat;
+        }
+
+        public int[] ReverseNtt(int[] aHat)
+        {
+            int[] cHat = new int[aHat.Length];
+
+            for (int i = 0; i < cHat.Length; i++)
+            {
+                cHat[i] = _ringArithmetic.Subtract(0, aHat[i]);
             }
 
             return cHat;
@@ -40,6 +64,30 @@ namespace CrystalsDilithium.Algorithms
             for (int i = 0; i < l; i++)
             {
                 uHat[i] = AddNtt(aHat[i], bHat[i]);
+            }
+
+            return uHat;
+        }
+
+        public int[][] SubtractVectorNtt(int l, int[][] aHat, int[][] bHat)
+        {
+            int[][] uHat = new int[l][];
+
+            for (int i = 0; i < l; i++)
+            {
+                uHat[i] = SubtractNtt(aHat[i], bHat[i]);
+            }
+
+            return uHat;
+        }
+
+        public int[][] ReverseVectorNtt(int[][] aHat)
+        {
+            int[][] uHat = new int[aHat.Length][];
+
+            for (int i = 0; i < aHat.Length; i++)
+            {
+                uHat[i] = ReverseNtt(aHat[i]);
             }
 
             return uHat;
