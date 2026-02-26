@@ -53,7 +53,7 @@ namespace CrystalsDilithium.Algorithms
 
             for (int i = 0; i < _parameters.AMatrixDimensions.K; i++)
             {
-                int ziBytes = 32 * _precalcedBitlen / 8;
+                int ziBytes = 32 * _precalcedBitlen;
 
                 byte[] zi = new byte[ziBytes];
                 Buffer.BlockCopy(pk, offset, zi, 0, ziBytes);
@@ -99,8 +99,8 @@ namespace CrystalsDilithium.Algorithms
         public DecodedSecretKeyDto SkDecode(byte[] sk)
         {
             int bitLenEta = BitLength.GetBitLength(2 * _parameters.Eta); // bitlen(2η)
-            int yiBytes = 32 * bitLenEta / 8;
-            int wiBytes = 32 * _parameters.D / 8;
+            int yiBytes = 32 * bitLenEta;
+            int wiBytes = 32 * _parameters.D;
 
             int offset = 0;
 
@@ -159,16 +159,8 @@ namespace CrystalsDilithium.Algorithms
             int l = dto.Z.Length;
             int bitLen = BitLength.GetBitLength(_parameters.Gamma1 - 1);
 
-            int ziBytes = 32 * bitLen / 8;
-            byte[] hint = _bitAlgorithms.HintBitPack(dto.H);
-
-            int totalSize = dto.CWave.Length + l * ziBytes + hint.Length;
-            byte[] sigma = new byte[totalSize];
-
-            int offset = 0;
-
-            Buffer.BlockCopy(dto.CWave, 0, sigma, offset, dto.CWave.Length);
-            offset += dto.CWave.Length;
+            byte[] sigma = new byte[dto.CWave.Length];
+            Buffer.BlockCopy(dto.CWave, 0, sigma, 0, dto.CWave.Length);
 
             for (int i = 0; i < l; i++)
             {
@@ -177,11 +169,13 @@ namespace CrystalsDilithium.Algorithms
                     _parameters.Gamma1 - 1,
                     _parameters.Gamma1
                 );
-                Buffer.BlockCopy(zi, 0, sigma, offset, zi.Length);
-                offset += zi.Length;
+
+                sigma = ByteArrayHelpers.ConcatBytes(sigma, zi);
             }
 
-            Buffer.BlockCopy(hint, 0, sigma, offset, hint.Length);
+            byte[] hint = _bitAlgorithms.HintBitPack(dto.H);
+            sigma = ByteArrayHelpers.ConcatBytes(sigma, hint);
+
             return sigma;
         }
 
@@ -190,7 +184,7 @@ namespace CrystalsDilithium.Algorithms
             int l = _parameters.AMatrixDimensions.L;
             int bitLen = BitLength.GetBitLength(_parameters.Gamma1 - 1);
 
-            int ziBytes = 32 * bitLen / 8;
+            int ziBytes = 32 * bitLen;
             int cBytes = _parameters.Lambda / 4;
             int hintBytes = _parameters.Omega + _parameters.AMatrixDimensions.K;
 
@@ -236,7 +230,7 @@ namespace CrystalsDilithium.Algorithms
             int max = (DilithiumParameters.Q - 1) / (2 * _parameters.Gamma2) - 1;
             int bitLen = BitLength.GetBitLength(max);
 
-            int polyBytes = 32 * bitLen / 8;
+            int polyBytes = 32 * bitLen;
             byte[] w1hat = new byte[k * polyBytes];
 
             int offset = 0;

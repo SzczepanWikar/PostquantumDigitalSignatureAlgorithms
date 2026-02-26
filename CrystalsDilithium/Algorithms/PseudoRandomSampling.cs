@@ -27,13 +27,27 @@ namespace CrystalsDilithium.Algorithms
             byte[] hash = shake256.Read(8);
             BitArray h = new BitArray(hash);
 
+            byte[] buf = new byte[128];
+            shake256.Read(buf);
+            int pos = 0;
+
             for (int i = 256 - _parameters.Tau; i < 256; i++)
             {
-                int j = shake256.Read(1)[0];
+                if (pos >= buf.Length)
+                {
+                    shake256.Read(buf);
+                    pos = 0;
+                }
+                int j = buf[pos++];
 
                 while (j > i)
                 {
-                    j = shake256.Read(1)[0];
+                    if (pos >= buf.Length)
+                    {
+                        shake256.Read(buf);
+                        pos = 0;
+                    }
+                    j = buf[pos++];
                 }
 
                 c[i] = c[j];

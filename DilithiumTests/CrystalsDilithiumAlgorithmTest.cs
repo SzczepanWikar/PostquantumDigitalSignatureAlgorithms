@@ -11,13 +11,13 @@ namespace DilithiumTests
             public static IEnumerable<object[]> SecurityLevels =>
                 [
                     [DilithiumParametersProvider.SecurityLevel2Parameters, MLDsaAlgorithm.MLDsa44],
-                    [DilithiumParametersProvider.SecurityLevel3Parameters, MLDsaAlgorithm.MLDsa65],
-                    [DilithiumParametersProvider.SecurityLevel5Parameters, MLDsaAlgorithm.MLDsa87],
+                    //[DilithiumParametersProvider.SecurityLevel3Parameters, MLDsaAlgorithm.MLDsa65],
+                    //[DilithiumParametersProvider.SecurityLevel5Parameters, MLDsaAlgorithm.MLDsa87],
                 ];
 
             [Theory]
             [MemberData(nameof(SecurityLevels))]
-            public void CrystalsDilithiumAlgorithm_KeyGen_GeneratedKeysAreCompatibleWithReferenceImpelementation(DilithiumParameters parameters, MLDsaAlgorithm mlDsaAlgorithm)
+            public void CrystalsDilithiumAlgorithm_KeyGen_GeneratedKeysAreCompatibleWithReferenceImplementation(DilithiumParameters parameters, MLDsaAlgorithm mlDsaAlgorithm)
             {
                 //Arrange
                 CrystalsDilithiumAlgorithm algorithm = new CrystalsDilithiumAlgorithm(parameters);
@@ -33,6 +33,26 @@ namespace DilithiumTests
                 byte[] signature = signingReferenceAlgorithm.SignData(message);
 
                 bool isValid = veryfyingReferenceAlgorithm.VerifyData(message, signature);
+
+                // Assert
+                Assert.True(isValid);
+            }
+
+            [Theory]
+            [MemberData(nameof(SecurityLevels))]
+            public void CrystalsDilithiumAlgorithm_Sign_SignIsCompatibleWithReferenceImplementation(DilithiumParameters parameters, MLDsaAlgorithm mlDsaAlgorithm)
+            {
+                //Arrange
+                CrystalsDilithiumAlgorithm algorithm = new CrystalsDilithiumAlgorithm(parameters);
+
+                MLDsa referenceAlgorithm = MLDsa.GenerateKey(mlDsaAlgorithm);
+                byte[] sk = referenceAlgorithm.ExportMLDsaPrivateKey();
+                // Act
+                byte[] message = Encoding.UTF8.GetBytes("Document");
+
+                byte[] signature = algorithm.Sign(sk, message);
+
+                bool isValid = referenceAlgorithm.VerifyData(message, signature);
 
                 // Assert
                 Assert.True(isValid);

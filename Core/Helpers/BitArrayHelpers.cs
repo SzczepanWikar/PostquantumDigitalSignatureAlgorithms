@@ -20,7 +20,7 @@ namespace Core.Helpers
 
             return result;
         }
-        
+
         public static int CountTruths(BitArray[] arrays)
         {
             int count = 0;
@@ -33,13 +33,13 @@ namespace Core.Helpers
             return count;
         }
 
-        public static int CountTruths(BitArray array) 
+        public static int CountTruths(BitArray array)
         {
             int count = 0;
 
-            foreach (bool bit in array) 
+            foreach (bool bit in array)
             {
-                if(bit)
+                if (bit)
                 {
                     count++;
                 }

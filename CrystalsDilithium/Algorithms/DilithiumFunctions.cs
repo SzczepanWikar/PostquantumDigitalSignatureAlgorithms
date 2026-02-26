@@ -136,7 +136,7 @@ namespace CrystalsDilithium.Algorithms
         public int[] LowBits(int[] r)
         {
             int[] res = new int[r.Length];
-            
+
             for (int i = 0; i < r.Length; i++)
             {
                 res[i] = LowBits(r[i]);
@@ -144,6 +144,7 @@ namespace CrystalsDilithium.Algorithms
 
             return res;
         }
+
         public int LowBits(int r) => Decompose(r).r0;
 
         public BitArray[] MakeHint(int[][] z, int[][] r)
@@ -158,7 +159,7 @@ namespace CrystalsDilithium.Algorithms
 
         public BitArray MakeHint(int[] z, int[] r)
         {
-            BitArray res = new (z.Length);
+            BitArray res = new(z.Length);
             for (int i = 0; i < z.Length; i++)
             {
                 res[i] = MakeHint(z[i], r[i]);

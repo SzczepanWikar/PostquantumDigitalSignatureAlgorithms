@@ -184,23 +184,22 @@ namespace CrystalsDilithium.Algorithms
         {
             int yLength = _parameters.AMatrixDimensions.K + _parameters.Omega;
             byte[] y = new byte[yLength];
-            Array.Fill(y, (byte)0);
 
-            byte index = 0;
+            int index = 0;
 
             for (int i = 0; i < h.Count(); i++)
             {
-                for (byte j = 0; j <= byte.MaxValue; j++)
+                for (int j = 0; j <= 255; j++)
                 {
                     if (h[i][j] == false)
                     {
                         continue;
                     }
 
-                    y[index] = j;
+                    y[index] = (byte)j;
                     index++;
                 }
-                y[_parameters.Omega + i] = index;
+                y[_parameters.Omega + i] = (byte)index;
             }
 
             return y;

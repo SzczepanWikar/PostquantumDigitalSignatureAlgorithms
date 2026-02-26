@@ -311,8 +311,10 @@ namespace CrystalsDilithium.Algorithms
                     for (int j = start; j < start + len; j++)
                     {
                         int t = Modulo.FloorMod((long)z * wHat[j + len], DilithiumParameters.Q);
-                        wHat[j + len] = Modulo.FloorMod(wHat[j] - t, DilithiumParameters.Q);
-                        wHat[j] = Modulo.FloorMod(wHat[j] + t, DilithiumParameters.Q);
+                        int sub = wHat[j] - t;
+                        wHat[j + len] = sub < 0 ? sub + DilithiumParameters.Q : sub;
+                        int add = wHat[j] + t;
+                        wHat[j] = add >= DilithiumParameters.Q ? add - DilithiumParameters.Q : add;
                     }
                     start += 2 * len;
                 }
@@ -342,8 +344,10 @@ namespace CrystalsDilithium.Algorithms
                     for (int j = start; j < start + len; j++)
                     {
                         int t = w[j];
-                        w[j] = Modulo.FloorMod((long)t + w[j + len], DilithiumParameters.Q);
-                        w[j + len] = Modulo.FloorMod(t - w[j + len], DilithiumParameters.Q);
+                        int add = t + w[j + len];
+                        w[j] = add >= DilithiumParameters.Q ? add - DilithiumParameters.Q : add;
+                        int sub = t - w[j + len];
+                        w[j + len] = sub < 0 ? sub + DilithiumParameters.Q : sub;
                         w[j + len] = Modulo.FloorMod((long)z * w[j + len], DilithiumParameters.Q);
                     }
 

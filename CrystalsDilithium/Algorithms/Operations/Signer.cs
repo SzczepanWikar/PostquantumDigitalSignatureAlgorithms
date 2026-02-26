@@ -73,42 +73,38 @@ namespace CrystalsDilithium.Algorithms.Operations
                 )
                 {
                     z = null;
-                    continue;
-                }
-
-                int[][] ct0Norm = Ntt.InverseNtt(
-                    _nttArithmetic.ScalarVectorNtt(_parameters.AMatrixDimensions.K, cHat, t0Hat)
-                );
-
-                int ct0NormInfiniteNorm = PolynomialNorm.InfinityNorm(
-                    ct0Norm,
-                    DilithiumParameters.Q
-                );
-
-                if (ct0NormInfiniteNorm >= _parameters.Gamma2)
-                {
-                    z = null;
-                    continue;
-                }
-
-                h = CalcHint(w, cs2Norm, ct0Norm);
-
-                if (BitArrayHelpers.CountTruths(h) > _parameters.Omega)
-                {
-                    z = null;
                     h = null;
+                }
+                else
+                {
+                    int[][] ct0Norm = Ntt.InverseNtt(
+                        _nttArithmetic.ScalarVectorNtt(_parameters.AMatrixDimensions.K, cHat, t0Hat)
+                    );
 
-                    continue;
+                    int ct0NormInfiniteNorm = PolynomialNorm.InfinityNorm(
+                        ct0Norm,
+                        DilithiumParameters.Q
+                    );
+
+                    if (ct0NormInfiniteNorm >= _parameters.Gamma2)
+                    {
+                        z = null;
+                        h = null;
+                    }
+
+                    h = CalcHint(w, cs2Norm, ct0Norm);
+
+                    if (BitArrayHelpers.CountTruths(h) > _parameters.Omega)
+                    {
+                        z = null;
+                        h = null;
+                    }
                 }
 
-                k = k + _parameters.AMatrixDimensions.L;
+                k += _parameters.AMatrixDimensions.L;
             }
 
-            SignatureDto dto = new(
-                CWave: cWave,
-                Z: CalcModulo(z!),
-                H: h!
-             );
+            SignatureDto dto = new(CWave: cWave, Z: CalcModulo(z!), H: h!);
 
             byte[] sigma = _encoder.SigEncode(dto);
 

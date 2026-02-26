@@ -115,7 +115,13 @@ namespace CrystalsDilithium.Algorithms
 
                 for (int j = 0; j < _parameters.AMatrixDimensions.L; j++)
                 {
-                    wHat[i] = AddNtt(wHat[i], MultiplyNtt(mHat[i][j], vHat[j]));
+                    for (int k = 0; k < 256; k++)
+                    {
+                        wHat[i][k] = _ringArithmetic.Add(
+                            wHat[i][k],
+                            _ringArithmetic.Multiply(mHat[i][j][k], vHat[j][k])
+                        );
+                    }
                 }
             }
 
