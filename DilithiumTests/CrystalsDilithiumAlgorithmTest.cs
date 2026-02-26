@@ -11,8 +11,8 @@ namespace DilithiumTests
             public static IEnumerable<object[]> SecurityLevels =>
                 [
                     [DilithiumParametersProvider.SecurityLevel2Parameters, MLDsaAlgorithm.MLDsa44],
-                    //[DilithiumParametersProvider.SecurityLevel3Parameters, MLDsaAlgorithm.MLDsa65],
-                    //[DilithiumParametersProvider.SecurityLevel5Parameters, MLDsaAlgorithm.MLDsa87],
+                    [DilithiumParametersProvider.SecurityLevel3Parameters, MLDsaAlgorithm.MLDsa65],
+                    [DilithiumParametersProvider.SecurityLevel5Parameters, MLDsaAlgorithm.MLDsa87],
                 ];
 
             [Theory]
