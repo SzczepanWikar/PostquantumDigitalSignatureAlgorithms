@@ -205,7 +205,7 @@ namespace CrystalsDilithium.Algorithms
             return y;
         }
 
-        public IList<BitArray>? HintBitUnpack(byte[] y)
+        public BitArray[]? HintBitUnpack(byte[] y)
         {
             BitArray[] h = new BitArray[_parameters.AMatrixDimensions.K];
 

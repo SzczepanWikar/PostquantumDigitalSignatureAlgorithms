@@ -175,7 +175,7 @@ namespace CrystalsDilithium.Algorithms
             return r1 != v1;
         }
 
-        public int[][] UseHint(bool[][] h, int[][] r)
+        public int[][] UseHint(BitArray[] h, int[][] r)
         {
             int[][] res = new int[r.Length][];
             for (int i = 0; i < r.Length; i++)
@@ -185,7 +185,7 @@ namespace CrystalsDilithium.Algorithms
             return res;
         }
 
-        public int[] UseHint(bool[] h, int[] r)
+        public int[] UseHint(BitArray h, int[] r)
         {
             int[] res = new int[r.Length];
             for (int i = 0; i < r.Length; i++)

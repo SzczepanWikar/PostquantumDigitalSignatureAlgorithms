@@ -9,17 +9,17 @@ namespace CrystalsDilithium
     public sealed class CrystalsDilithiumAlgorithm
     {
         private const byte _seedLength = 32;
-        private readonly DilithiumParameters _parameters;
         private readonly KeyGenerator _keyGenerator;
         private readonly Signer _signer;
         private readonly BitAlgorithms _bitAlgorithms;
+        private readonly Verifier _verifier;
 
         public CrystalsDilithiumAlgorithm(DilithiumParameters parameters)
         {
-            _parameters = parameters;
             _keyGenerator = new(parameters);
             _signer = new(parameters);
             _bitAlgorithms = new(parameters);
+            _verifier = new(parameters);
         }
 
         public (byte[] pk, byte[] sk) KeyGen()
@@ -78,6 +78,40 @@ namespace CrystalsDilithium
             byte[] sigma = _signer.SignInternal(sk, messagePrim, rnd);
 
             return sigma;
+        }
+
+        public bool Verify(byte[] pk, BitArray m, byte[] sigma) => Verify(pk, m, sigma, []);
+
+        public bool Verify(byte[] pk, byte[] m, byte[] sigma) => Verify(pk, m, sigma, []);
+
+        public bool Verify(byte[] pk, byte[] m, byte[] sigma, byte[] ctx)
+        {
+            BitArray message = _bitAlgorithms.BytesToBits(m);
+
+            return Verify(pk, message, sigma, ctx);
+        }
+
+        public bool Verify(byte[] pk, BitArray m, byte[] sigma, byte[] ctx)
+        {
+            if (ctx.Length > 255)
+            {
+                throw new ArgumentException("Context string is to long.");
+            }
+
+            byte[] messagePrefix = ByteArrayHelpers.ConcatBytes(
+                _bitAlgorithms.IntegerToBytes(0, 1),
+                _bitAlgorithms.IntegerToBytes(ctx.Length, 1),
+                ctx
+            );
+
+            BitArray messagePrim = BitArrayHelpers.Concat(
+                _bitAlgorithms.BytesToBits(messagePrefix),
+                m
+            );
+
+            bool res = _verifier.VerifyInternal(pk, messagePrim, sigma);
+
+            return res;
         }
     }
 }

@@ -47,12 +47,34 @@ namespace DilithiumTests
 
                 MLDsa referenceAlgorithm = MLDsa.GenerateKey(mlDsaAlgorithm);
                 byte[] sk = referenceAlgorithm.ExportMLDsaPrivateKey();
+
                 // Act
                 byte[] message = Encoding.UTF8.GetBytes("Document");
 
                 byte[] signature = algorithm.Sign(sk, message);
 
                 bool isValid = referenceAlgorithm.VerifyData(message, signature);
+
+                // Assert
+                Assert.True(isValid);
+            }
+
+            [Theory]
+            [MemberData(nameof(SecurityLevels))]
+            public void CrystalsDilithiumAlgorithm_Verify_VerifyIsCompatibleWithReferenceImplementation(DilithiumParameters parameters, MLDsaAlgorithm mlDsaAlgorithm)
+            {
+                // Arrange
+                CrystalsDilithiumAlgorithm algorithm = new CrystalsDilithiumAlgorithm(parameters);
+
+                MLDsa referenceAlgorithm = MLDsa.GenerateKey(mlDsaAlgorithm);
+                byte[] pk = referenceAlgorithm.ExportMLDsaPublicKey();
+
+                // Act
+                byte[] message = Encoding.UTF8.GetBytes("Document");
+
+                byte[] signature = referenceAlgorithm.SignData(message);
+
+                bool isValid = algorithm.Verify(pk, message, signature);
 
                 // Assert
                 Assert.True(isValid);

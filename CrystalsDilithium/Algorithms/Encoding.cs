@@ -182,7 +182,7 @@ namespace CrystalsDilithium.Algorithms
         public SignatureDto SigDecode(byte[] sigma)
         {
             int l = _parameters.AMatrixDimensions.L;
-            int bitLen = BitLength.GetBitLength(_parameters.Gamma1 - 1);
+            int bitLen = BitLength.GetBitLength(2 * _parameters.Gamma1 - 1);
 
             int ziBytes = 32 * bitLen;
             int cBytes = _parameters.Lambda / 4;
@@ -213,12 +213,7 @@ namespace CrystalsDilithium.Algorithms
             byte[] hintBytesArr = new byte[hintBytes];
             Buffer.BlockCopy(sigma, offset, hintBytesArr, 0, hintBytes);
 
-            IList<BitArray>? h = _bitAlgorithms.HintBitUnpack(hintBytesArr);
-
-            if (h == null)
-            {
-                throw new CryptographicException("Invalid hint");
-            }
+            BitArray[]? h = _bitAlgorithms.HintBitUnpack(hintBytesArr);
 
             return new(cWave, z, h);
         }
