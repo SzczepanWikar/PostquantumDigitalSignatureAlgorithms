@@ -11,18 +11,18 @@ namespace CrystalsDilithium.Algorithms.Operations
     {
         private readonly DilithiumParameters _parameters;
         private readonly BitAlgorithms _bitAlgorithms;
-        private readonly PseudoRandomSampling _pseudoRandomSampling;
+        private readonly PseudoRandomSampling _pseudoRandomSampler;
         private readonly NttArithmetic _nttArithmetic;
-        private readonly Encoding _encoding;
+        private readonly Encoding _encoder;
         private readonly DilithiumFunctions _dilithiumFunctions;
 
         public KeyGenerator(DilithiumParameters parameters)
         {
             _parameters = parameters;
             _bitAlgorithms = new(parameters);
-            _pseudoRandomSampling = new(parameters);
+            _pseudoRandomSampler = new(parameters);
             _nttArithmetic = new(parameters);
-            _encoding = new(parameters);
+            _encoder = new(parameters);
             _dilithiumFunctions = new(parameters);
         }
 
@@ -30,20 +30,20 @@ namespace CrystalsDilithium.Algorithms.Operations
         {
             (byte[] rho, byte[] rhoPrim, byte[] k) = ExtraxtDataFromSeed(ksi);
 
-            int[][][] aDash = _pseudoRandomSampling.ExpandA(rho);
+            int[][][] aDash = _pseudoRandomSampler.ExpandA(rho);
 
-            (int[][] s1, int[][] s2) = _pseudoRandomSampling.ExpandS(rhoPrim);
+            (int[][] s1, int[][] s2) = _pseudoRandomSampler.ExpandS(rhoPrim);
 
             int[][] t = CalcT(aDash, s1, s2);
 
             (int[][] t1, int[][] t0) = _dilithiumFunctions.Power2Round(t);
 
-            byte[] pk = _encoding.PkEncode(rho, t1);
+            byte[] pk = _encoder.PkEncode(rho, t1);
 
             byte[] tr = Shake256.HashData(pk, 64);
             DecodedSecretKeyDto skDto = new(Rho: rho, K: k, Tr: tr, S1: s1, S2: s2, T0: t0);
 
-            byte[] sk = _encoding.SkEncode(skDto);
+            byte[] sk = _encoder.SkEncode(skDto);
 
             return (pk, sk);
         }

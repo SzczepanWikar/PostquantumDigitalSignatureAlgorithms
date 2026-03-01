@@ -59,47 +59,7 @@ namespace CrystalsDilithium.Algorithms.Operations
                     _nttArithmetic.ScalarVectorNtt(_parameters.AMatrixDimensions.K, cHat, s2Hat)
                 );
 
-                z = _nttArithmetic.AddVectorNtt(y.Length, y, cs1Norm);
-                int[][] r0 = _dilithiumFunctions.LowBits(
-                    _nttArithmetic.SubtractVectorNtt(w.Length, w, cs2Norm)
-                );
-
-                int zInfiniteNorm = PolynomialNorm.InfinityNorm(z, DilithiumParameters.Q);
-                int r0InfiniteNorm = PolynomialNorm.InfinityNorm(r0, DilithiumParameters.Q);
-
-                if (
-                    zInfiniteNorm >= _parameters.Gamma1 - _parameters.Beta
-                    || r0InfiniteNorm >= _parameters.Gamma2 - _parameters.Beta
-                )
-                {
-                    z = null;
-                    h = null;
-                }
-                else
-                {
-                    int[][] ct0Norm = Ntt.InverseNtt(
-                        _nttArithmetic.ScalarVectorNtt(_parameters.AMatrixDimensions.K, cHat, t0Hat)
-                    );
-
-                    int ct0NormInfiniteNorm = PolynomialNorm.InfinityNorm(
-                        ct0Norm,
-                        DilithiumParameters.Q
-                    );
-
-                    if (ct0NormInfiniteNorm >= _parameters.Gamma2)
-                    {
-                        z = null;
-                        h = null;
-                    }
-
-                    h = CalcHint(w, cs2Norm, ct0Norm);
-
-                    if (BitArrayHelpers.CountTruths(h) > _parameters.Omega)
-                    {
-                        z = null;
-                        h = null;
-                    }
-                }
+                (z, h) = SampleZAndH(t0Hat, y, w, cHat, cs1Norm, cs2Norm);
 
                 k += _parameters.AMatrixDimensions.L;
             }
@@ -109,6 +69,55 @@ namespace CrystalsDilithium.Algorithms.Operations
             byte[] sigma = _encoder.SigEncode(dto);
 
             return sigma;
+        }
+
+        private (int[][]? z, BitArray[]? h) SampleZAndH(
+            int[][] t0Hat,
+            int[][] y,
+            int[][] w,
+            int[] cHat,
+            int[][] cs1Norm,
+            int[][] cs2Norm
+        )
+        {
+            int[][]? z = null;
+            BitArray[]? h = null;
+
+            z = _nttArithmetic.AddVectorNtt(y.Length, y, cs1Norm);
+            int[][] r0 = _dilithiumFunctions.LowBits(
+                _nttArithmetic.SubtractVectorNtt(w.Length, w, cs2Norm)
+            );
+
+            int zInfiniteNorm = PolynomialNorm.InfinityNorm(z, DilithiumParameters.Q);
+            int r0InfiniteNorm = PolynomialNorm.InfinityNorm(r0, DilithiumParameters.Q);
+
+            if (
+                zInfiniteNorm >= _parameters.Gamma1 - _parameters.Beta
+                || r0InfiniteNorm >= _parameters.Gamma2 - _parameters.Beta
+            )
+            {
+                return (null, null);
+            }
+
+            int[][] ct0Norm = Ntt.InverseNtt(
+                _nttArithmetic.ScalarVectorNtt(_parameters.AMatrixDimensions.K, cHat, t0Hat)
+            );
+
+            int ct0NormInfiniteNorm = PolynomialNorm.InfinityNorm(ct0Norm, DilithiumParameters.Q);
+
+            if (ct0NormInfiniteNorm >= _parameters.Gamma2)
+            {
+                return (null, null);
+            }
+
+            h = CalcHint(w, cs2Norm, ct0Norm);
+
+            if (BitArrayHelpers.CountTruths(h) > _parameters.Omega)
+            {
+                return (null, null);
+            }
+
+            return (z, h);
         }
 
         private (byte[] mi, byte[] rhoBis) GeneratePrivateRandomSeed(
