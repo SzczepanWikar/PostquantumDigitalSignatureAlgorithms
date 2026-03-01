@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Diagnostics;
 using System.Security.Cryptography;
 using Core.Helpers;
 
@@ -80,7 +79,11 @@ namespace CrystalsDilithium.Algorithms
 
         public (int r1, int r0) Decompose(int r, int alpha)
         {
-            Debug.Assert(r >= 0, "Input must be non-negative.");
+            if (r < 0)
+            {
+                throw new CryptographicException($"Decompose input must be non-negative, got {r}.");
+            }
+
             r = r % DilithiumParameters.Q;
 
             int r0 = Modulo.ModPlusMinus(r, alpha);
