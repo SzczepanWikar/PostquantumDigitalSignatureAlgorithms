@@ -9,6 +9,10 @@ _Comparison and implementation of selected post-quantum digital signature algori
 This master's thesis project focuses on the implementation and test of selected post-quantum digital signature algorithms.
 Choosen algoritms are **CRYSTALS-Dilithium (FIPS 204)** and **SPHINCS+ (FIPS 205)**.
 
+## Current Status
+
+Currently, only **CRYSTALS-Dilithium (FIPS 204)** has been implemented. The **SPHINCS+ (FIPS 205)** implementation is planned but not yet started.
+
 ## Implementation Notes
 
 Method parameter names in the implementation follow the notation defined in the respective standards (FIPS 204, FIPS 205). For example, parameters such as `rho`, `rhoPrim`, `eta`, `t1`, `ksi` correspond directly to the symbols used in the algorithm specifications.
