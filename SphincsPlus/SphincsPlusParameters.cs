@@ -1,3 +1,5 @@
+using SphincsPlus.Hashing;
+
 namespace SphincsPlus
 {
     public sealed class SphincsPlusParameters
@@ -67,7 +69,12 @@ namespace SphincsPlus
         /// </summary>
         public int SignatureSize { get; }
 
-        public SphincsPlusParameters(int n, int h, int d, int a, int k, int m)
+        /// <summary>
+        /// Set of hashing functions
+        /// </summary>
+        internal ISphincsPlusHashing Hashing { get; }
+
+        internal SphincsPlusParameters(int n, int h, int d, int a, int k, int m, ISphincsPlusHashing sphincsPlusHashing)
         {
             N = n;
             H = h;
@@ -75,6 +82,7 @@ namespace SphincsPlus
             A = a;
             K = k;
             M = m;
+            Hashing = sphincsPlusHashing;
 
             HPrime = H / D;
 
