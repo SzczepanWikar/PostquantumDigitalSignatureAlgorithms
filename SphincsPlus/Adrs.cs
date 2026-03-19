@@ -17,7 +17,12 @@ namespace SphincsPlus
                 throw new ArgumentException("Content length must be 32.");
             }
 
-            Content = content;
+            Content = content.ToArray();
+        }
+
+        public Adrs(Adrs adrs)
+        {
+            Content = adrs.Content.ToArray();
         }
 
         public void SetLayerAddress(int l)
@@ -76,7 +81,7 @@ namespace SphincsPlus
         }
         public void SetTreeIndex(int i) => SetHashAddress(i);
 
-        public long GetKeyPairAddress() => ByteConversions.ToInt64(Content[20..24]);
-        public long GetTreeIndex() => ByteConversions.ToInt64(Content[28..32]);
+        public int GetKeyPairAddress() => ByteConversions.ToInt(Content[20..24]);
+        public int GetTreeIndex() => ByteConversions.ToInt(Content[28..32]);
     }
 }

@@ -1,16 +1,16 @@
 ﻿using System.Diagnostics;
 
-namespace SphincsPlus
+namespace SphincsPlus.Algorithms
 {
     internal static class ByteConversions
     {
-        public static long ToInt64(byte[] x)
+        public static int ToInt(byte[] x)
         {
-            long total = 0;
+            int total = 0;
 
             for (int i = 0; i < x.Length; i++) 
             {
-                total = 256L * total + x[i];
+                total = 256 * total + x[i];
             }
 
             return total;
@@ -19,6 +19,11 @@ namespace SphincsPlus
         public static byte[] ToByte(int x, int n)
         {
             Debug.Assert(x >= 0, "x must be nonnegative.");
+
+            if (x == 0)
+            {
+                return new byte[n];
+            }
 
             int total = x;
             byte[] s = new byte[n];
