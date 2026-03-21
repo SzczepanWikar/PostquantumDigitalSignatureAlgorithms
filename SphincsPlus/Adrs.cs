@@ -34,7 +34,7 @@ namespace SphincsPlus
             Content = ByteArrayHelpers.ConcatBytes(layer, postfix);
         }
 
-        public void SetTreeAddress(int t)
+        public void SetTreeAddress(ulong t)
         {
             byte[] layer = Content.Take(4).ToArray();
             byte[] tree = ByteConversions.ToByte(t, 12);

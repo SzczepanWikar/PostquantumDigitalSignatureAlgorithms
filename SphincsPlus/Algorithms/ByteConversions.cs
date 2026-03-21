@@ -15,8 +15,20 @@ namespace SphincsPlus.Algorithms
 
             return total;
         }
+        
+        public static long ToInt64(byte[] x)
+        {
+            long total = 0;
 
-        public static byte[] ToByte(int x, int n)
+            for (int i = 0; i < x.Length; i++)
+            {
+                total = 256 * total + x[i];
+            }
+
+            return total;
+        }
+
+        public static byte[] ToByte(long x, int n)
         {
             Debug.Assert(x >= 0, "x must be nonnegative.");
 

@@ -99,7 +99,7 @@ namespace SphincsPlus.Algorithms
         private static Adrs InitAdrs(Adrs adrs, SphincsPlusConstants constant)
         {
             Adrs result = new Adrs(adrs);
-            result.SetTypeAndClear((int)constant);
+            result.SetTypeAndClear(constant);
             result.SetKeyPairAddress(adrs.GetKeyPairAddress());
 
             return result;
