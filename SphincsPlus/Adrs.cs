@@ -43,6 +43,8 @@ namespace SphincsPlus
             Content = ByteArrayHelpers.ConcatBytes(layer, tree, postfix);
         }
 
+        public void SetTypeAndClear(SphincsPlusConstants y) => SetTypeAndClear((int)y);
+
         public void SetTypeAndClear(int y)
         {
             byte[] prefix = Content.Take(16).ToArray();
