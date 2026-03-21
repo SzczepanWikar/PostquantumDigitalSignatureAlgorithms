@@ -42,12 +42,12 @@ namespace SphincsPlus
         /// <summary>
         /// Winternitz parameter — fixed at 16 for all FIPS 205 parameter sets
         /// </summary>
-        public const int W = 16;
+        public int W { get; } = 16;
 
         /// <summary>
         /// log₂(W) — bits per WOTS+ chain step, fixed at 4
         /// </summary>
-        public const int LogW = 4;
+        public int LogW { get; } = 4;
 
         /// <summary>
         /// Total number of n-byte values in a WOTS+ signature — Len1 + Len2
@@ -85,7 +85,7 @@ namespace SphincsPlus
             Hashing = sphincsPlusHashing;
 
             HPrime = H / D;
-
+            Len = 2 * N + 3;
             PublicKeySize = 2 * N;
             SecretKeySize = 4 * N;
             SignatureSize = (1 + K * (A + 1) + H + D * Len) * N;
