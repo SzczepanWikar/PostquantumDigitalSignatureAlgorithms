@@ -4,11 +4,14 @@ namespace SphincsPlus.Algorithms
 {
     internal static class ByteConversions
     {
-        public static int ToInt(byte[] x)
+        public static int ToInt(byte[] x) => ToInt(x, x.Length);
+        public static int ToInt(byte[] x, int n)
         {
+            Debug.Assert(x.Length >= n);
+
             int total = 0;
 
-            for (int i = 0; i < x.Length; i++) 
+            for (int i = 0; i < n; i++) 
             {
                 total = 256 * total + x[i];
             }
@@ -16,9 +19,12 @@ namespace SphincsPlus.Algorithms
             return total;
         }
         
-        public static long ToInt64(byte[] x)
+        public static ulong ToUint64(byte[] x) => ToUint64(x, x.Length);
+        public static ulong ToUint64(byte[] x, int n)
         {
-            long total = 0;
+            Debug.Assert(x.Length >= n);
+
+            ulong total = 0;
 
             for (int i = 0; i < x.Length; i++)
             {
@@ -37,7 +43,7 @@ namespace SphincsPlus.Algorithms
                 return new byte[n];
             }
 
-            int total = x;
+            long total = x;
             byte[] s = new byte[n];
 
             for (int i = 0; i < n; i++)

@@ -1,4 +1,5 @@
 ﻿using Core.Helpers;
+using SphincsPlus.Models;
 
 namespace SphincsPlus.Algorithms.Operations
 {
@@ -24,14 +25,14 @@ namespace SphincsPlus.Algorithms.Operations
         /// SK = SK.seed ‖ SK.prf ‖ PK.seed ‖ PK.root (4n bytes),
         /// PK = PK.seed ‖ PK.root (2n bytes)
         /// </returns>
-        internal (byte[] sk, byte[] pk) KeyGenInternal(byte[] skSeed, byte[] skPrf, byte[] pkSeed)
+        internal (SecretKey sk, PublicKey pk) KeyGenInternal(byte[] skSeed, byte[] skPrf, byte[] pkSeed)
         {
             Adrs adrs = new(ByteConversions.ToByte(0, 32));
             adrs.SetLayerAddress(_parameters.D - 1);
             byte[] pkRoot = _xmss.Node(skSeed, 0, _parameters.HPrime, pkSeed, adrs);
 
-            byte[] pk = ByteArrayHelpers.ConcatBytes(pkSeed, pkRoot);
-            byte[] sk = ByteArrayHelpers.ConcatBytes(skSeed, skPrf, pk);
+            SecretKey sk = new(skSeed, skPrf, pkSeed, pkRoot);
+            PublicKey pk = new(pkSeed, pkRoot);
 
             return (sk, pk);
         }
