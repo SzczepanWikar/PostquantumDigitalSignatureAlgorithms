@@ -9,14 +9,16 @@ namespace SphincsPlus.Algorithms.Operations
         private readonly SphincsPlusParameters _parameters;
         private readonly Fors _fors;
         private readonly HyperTree _hyperTree;
+        private readonly CommonOperations _commonOperations;
 
         private ISphincsPlusHashing _hashing => _parameters.Hashing;
 
-        public Signer(SphincsPlusParameters parameters, Fors fors, HyperTree hyperTree)
+        public Signer(SphincsPlusParameters parameters, Fors fors, HyperTree hyperTree, CommonOperations commonOperations)
         {
             _parameters = parameters;
             _fors = fors;
             _hyperTree = hyperTree;
+            _commonOperations = commonOperations;
         }
 
         /// <summary>
@@ -31,18 +33,13 @@ namespace SphincsPlus.Algorithms.Operations
         /// <returns>SLH-DSA signature: R ‖ SIG_FORS ‖ SIG_HT.</returns>
         internal byte[] SignInternal(byte[] m, SecretKey sk, byte[]? addrnd)
         {
-            Adrs adrs = new(ByteConversions.ToByte(0, 32));
-
             byte[] optRand = addrnd ?? sk.PkSeed;
             byte[] r = _hashing.PrfMsg(sk.SkPrf, optRand, m);
             byte[] sig = r;
-
             
-            var (idxTree, idxLeaf, md) = ExtractData(m, sk, r);
+            var (idxTree, idxLeaf, md) = _commonOperations.ExtractData(m, sk.PkSeed, sk.PkRoot, r);
 
-            adrs.SetTreeAddress(idxTree);
-            adrs.SetTypeAndClear(SphincsPlusConstants.ForsTree);
-            adrs.SetKeyPairAddress(idxLeaf);
+            Adrs adrs = _commonOperations.CreateForsTreeAdress(idxTree, idxLeaf);
 
             byte[] sigFors = _fors.Sign(md, sk.SkSeed, sk.PkSeed, adrs);
             sig = ByteArrayHelpers.ConcatBytes(sig, sigFors);
@@ -54,27 +51,6 @@ namespace SphincsPlus.Algorithms.Operations
             sig = ByteArrayHelpers.ConcatBytes(sig, sigHt);
 
             return sig;
-        }
-
-        private (ulong idxTree, int idxLeaf, byte[] md) ExtractData(byte[] m, SecretKey sk, byte[] r)
-        {
-            byte[] digest = _hashing.HMsg(r, sk.PkSeed, sk.PkRoot, m);
-
-            int mdLen = (_parameters.K * _parameters.A + 7) / 8;
-            int idxTreeLen = (_parameters.H - _parameters.HPrime + 7) / 8;
-            int idxLeafLen = (_parameters.HPrime + 7) / 8;
-
-            byte[] md = digest[..mdLen];
-            byte[] tmpIdxTree = digest[mdLen..(mdLen + idxTreeLen)];
-            byte[] tmpIdxLeaf = digest[(mdLen + idxTreeLen)..(mdLen + idxTreeLen + idxLeafLen)];
-
-            int exponent = _parameters.H - _parameters.HPrime;
-            ulong idxTree = exponent < 64
-                ? ByteConversions.ToUint64(tmpIdxTree) % (1UL << exponent)
-                : ByteConversions.ToUint64(tmpIdxTree);
-            int idxLeaf = ByteConversions.ToInt(tmpIdxLeaf) % (1 << (_parameters.H / _parameters.D));
-
-            return (idxTree, idxLeaf, md);
         }
     }
 }
