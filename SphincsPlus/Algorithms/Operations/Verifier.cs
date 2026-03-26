@@ -12,6 +12,9 @@ namespace SphincsPlus.Algorithms.Operations
 
         private ISphincsPlusHashing _hashing => _parameters.Hashing;
 
+        public Verifier(SphincsPlusParameters parameters)
+            : this(parameters, new Fors(parameters), new HyperTree(parameters), new CommonOperations(parameters)) { }
+
         public Verifier(SphincsPlusParameters parameters, Fors fors, HyperTree hyperTree, CommonOperations commonOperations)
         {
             _parameters = parameters;

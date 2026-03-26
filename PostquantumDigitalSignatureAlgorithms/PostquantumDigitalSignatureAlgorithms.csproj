@@ -15,5 +15,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CrystalsDilithium\CrystalsDilithium.csproj" />
+    <ProjectReference Include="..\SphincsPlus\SphincsPlus.csproj" />
   </ItemGroup>
 </Project>

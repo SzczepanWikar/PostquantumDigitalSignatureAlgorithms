@@ -10,16 +10,12 @@ namespace SphincsPlus.Algorithms.Operations
     internal sealed class CommonOperations
     {
         private readonly SphincsPlusParameters _parameters;
-        private readonly Fors _fors;
-        private readonly HyperTree _hyperTree;
 
         private ISphincsPlusHashing _hashing => _parameters.Hashing;
 
-        public CommonOperations(SphincsPlusParameters parameters, Fors fors, HyperTree hyperTree)
+        public CommonOperations(SphincsPlusParameters parameters)
         {
             _parameters = parameters;
-            _fors = fors;
-            _hyperTree = hyperTree;
         }
 
         public (ulong idxTree, int idxLeaf, byte[] md) ExtractData(byte[] m, byte[] pkSeed, byte[] pkRoot, byte[] r)

@@ -4,10 +4,18 @@ namespace Core.Helpers
 {
     public static class Hashing
     {
-        public static byte[] Mgf1Sha256HashData(byte[] seed, int maskLen) => Mgf1ShaHashData(seed, maskLen, 32, SHA256.HashData);
-        public static byte[] Mgf1Sha512HashData(byte[] seed, int maskLen) => Mgf1ShaHashData(seed, maskLen, 64, SHA512.HashData);
+        public static byte[] Mgf1Sha256HashData(byte[] seed, int maskLen) =>
+            Mgf1ShaHashData(seed, maskLen, 32, SHA256.HashData);
 
-        private static byte[] Mgf1ShaHashData(byte[] seed, int maskLen, int hLen, Func<byte[], byte[]> hashingFunction)
+        public static byte[] Mgf1Sha512HashData(byte[] seed, int maskLen) =>
+            Mgf1ShaHashData(seed, maskLen, 64, SHA512.HashData);
+
+        private static byte[] Mgf1ShaHashData(
+            byte[] seed,
+            int maskLen,
+            int hLen,
+            Func<byte[], byte[]> hashingFunction
+        )
         {
             int iterations = (int)Math.Ceiling((double)maskLen / hLen);
             byte[] t = new byte[iterations * hLen];
@@ -26,6 +34,6 @@ namespace Core.Helpers
             }
 
             return t[..maskLen];
-        } 
+        }
     }
 }

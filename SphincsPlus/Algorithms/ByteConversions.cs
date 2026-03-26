@@ -55,6 +55,27 @@ namespace SphincsPlus.Algorithms
             return s;
         }
 
+        public static byte[] ToByte(ulong x, int n)
+        {
+            Debug.Assert(x >= 0, "x must be nonnegative.");
+
+            if (x == 0)
+            {
+                return new byte[n];
+            }
+
+            ulong total = x;
+            byte[] s = new byte[n];
+
+            for (int i = 0; i < n; i++)
+            {
+                s[n - 1 - i] = (byte)(total % 256);
+                total = total >> 8;
+            }
+
+            return s;
+        }
+
         public static int[] Base2b(byte[] x, int b, int outLen)
         {
             int @in = 0, bits = 0, total = 0;

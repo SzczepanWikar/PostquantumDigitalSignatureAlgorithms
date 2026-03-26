@@ -7,6 +7,9 @@ namespace SphincsPlus.Algorithms
         private readonly SphincsPlusParameters _parameters;
         private readonly Xmss _xmss;
 
+        public HyperTree(SphincsPlusParameters parameters)
+            : this(parameters, new Xmss(parameters)) { }
+
         public HyperTree(SphincsPlusParameters parameters, Xmss xmss)
         {
             _parameters = parameters;

@@ -1,5 +1,4 @@
-﻿using Core.Helpers;
-using SphincsPlus.Models;
+﻿using SphincsPlus.Models;
 
 namespace SphincsPlus.Algorithms.Operations
 {
@@ -7,6 +6,9 @@ namespace SphincsPlus.Algorithms.Operations
     {
         private readonly SphincsPlusParameters _parameters;
         private readonly Xmss _xmss;
+
+        public KeyGenerator(SphincsPlusParameters parameters)
+            : this(parameters, new Xmss(parameters)) { }
 
         public KeyGenerator(SphincsPlusParameters parameters, Xmss xmss)
         {

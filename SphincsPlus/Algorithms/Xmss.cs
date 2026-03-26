@@ -9,6 +9,9 @@ namespace SphincsPlus.Algorithms
         private readonly WotsPlus _wotsPlus;
         private ISphincsPlusHashing _hashing => _parameters.Hashing;
 
+        public Xmss(SphincsPlusParameters parameters)
+            : this(parameters, new WotsPlus(parameters)) { }
+
         public Xmss(SphincsPlusParameters parameters, WotsPlus wotsPlus)
         {
             _parameters = parameters;
