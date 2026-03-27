@@ -82,8 +82,9 @@ namespace SphincsPlus
             Content = ByteArrayHelpers.ConcatBytes(prefix, hash);
         }
         public void SetTreeIndex(int i) => SetHashAddress(i);
-
         public int GetKeyPairAddress() => ByteConversions.ToInt(Content[20..24]);
         public int GetTreeIndex() => ByteConversions.ToInt(Content[28..32]);
+        public byte[] Compress() =>
+            ByteArrayHelpers.ConcatBytes(Content[3..4], Content[8..16], Content[19..20], Content[20..32]);
     }
 }

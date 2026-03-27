@@ -16,13 +16,13 @@ namespace SphincsPlus.Hashing
 
         public byte[] F(byte[] pkSeed, Adrs adrs, byte[] m1) =>
             SHA256
-                .HashData(ByteArrayHelpers.ConcatBytes(pkSeed, new byte[64 - _n], adrs.Content, m1))
+                .HashData(ByteArrayHelpers.ConcatBytes(pkSeed, new byte[64 - _n], adrs.Compress(), m1))
                 .Take(_n)
                 .ToArray();
 
         public byte[] H(byte[] pkSeed, Adrs adrs, byte[] m2) =>
             SHA256
-                .HashData(ByteArrayHelpers.ConcatBytes(pkSeed, new byte[64 - _n], adrs.Content, m2))
+                .HashData(ByteArrayHelpers.ConcatBytes(pkSeed, new byte[64 - _n], adrs.Compress(), m2))
                 .Take(_n)
                 .ToArray();
 
@@ -38,7 +38,7 @@ namespace SphincsPlus.Hashing
 
         public byte[] Prf(byte[] pkSeed, byte[] skSeed, Adrs adrs) =>
             SHA256
-                .HashData(ByteArrayHelpers.ConcatBytes(pkSeed, new byte[64 - _n], adrs.Content, skSeed))
+                .HashData(ByteArrayHelpers.ConcatBytes(pkSeed, new byte[64 - _n], adrs.Compress(), skSeed))
                 .Take(_n)
                 .ToArray();
 
@@ -47,7 +47,7 @@ namespace SphincsPlus.Hashing
 
         public byte[] T(byte[] pkSeed, Adrs adrs, byte[] ml) =>
             SHA256
-                .HashData(ByteArrayHelpers.ConcatBytes(pkSeed, new byte[64 - _n], adrs.Content, ml))
+                .HashData(ByteArrayHelpers.ConcatBytes(pkSeed, new byte[64 - _n], adrs.Compress(), ml))
                 .Take(_n)
                 .ToArray();
     }
