@@ -1,5 +1,6 @@
 ﻿using Core.Helpers;
 using SphincsPlus.Hashing;
+using System.Diagnostics;
 
 namespace SphincsPlus.Algorithms
 {
@@ -21,6 +22,8 @@ namespace SphincsPlus.Algorithms
 
         public byte[] Chain(byte[] x, int i, int s, byte[] pkSeed, Adrs adrs)
         {
+            Debug.Assert((i + s) <= _parameters.W - 1);
+
             byte[] tmp = new byte[x.Length];
 
             x.CopyTo(tmp, 0);

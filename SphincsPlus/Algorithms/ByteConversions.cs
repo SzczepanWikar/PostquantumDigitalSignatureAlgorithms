@@ -26,7 +26,7 @@ namespace SphincsPlus.Algorithms
 
             ulong total = 0;
 
-            for (int i = 0; i < x.Length; i++)
+            for (int i = 0; i < n; i++)
             {
                 total = 256 * total + x[i];
             }
@@ -78,20 +78,22 @@ namespace SphincsPlus.Algorithms
 
         public static int[] Base2b(byte[] x, int b, int outLen)
         {
-            int @in = 0, bits = 0, total = 0;
+            int @in = 0, bits = 0;
+            long total = 0;
             int[] baseb = new int[outLen];
 
             for (int @out = 0; @out < outLen; @out++)
             {
-                while(bits < b)
+                while (bits < b)
                 {
-                    total = (total << 8) + x[@in];
+                    total = (total << 8) | x[@in];
                     @in++;
                     bits += 8;
                 }
 
                 bits -= b;
-                baseb[@out] = (total >> bits) % (1 << b);
+                baseb[@out] = (int)((total >> bits) & ((1 << b) - 1));
+                total &= (1L << bits) - 1;
             }
 
             return baseb;
