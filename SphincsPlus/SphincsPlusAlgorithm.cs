@@ -38,9 +38,6 @@ namespace SphincsPlus
             return (sk.ToBytesArray(), pk.ToBytesArray());
         }
 
-        /// <summary>
-        /// Algorithm 22 — slh_sign.
-        /// </summary>
         public byte[] Sign(byte[] m, byte[] ctx, byte[] sk)
         {
             if (ctx.Length > 255)
@@ -60,9 +57,6 @@ namespace SphincsPlus
             return _signer.SignInternal(mPrime, SecretKey.FromBytesArray(sk), addRnd);
         }
 
-        /// <summary>
-        /// Algorithm 23 — hash_slh_sign.
-        /// </summary>
         public byte[] Sign(byte[] m, byte[] ctx, PreHashFunction ph, byte[] sk)
         {
             if (ctx.Length > 255)
@@ -80,11 +74,51 @@ namespace SphincsPlus
                 ctx,
                 oid,
                 phM
-                );
+            );
 
             byte[] signature = _signer.SignInternal(mPrime, SecretKey.FromBytesArray(sk), addRnd);
 
             return signature;
+        }
+        public bool Verify(byte[] m, byte[] sig, byte[] ctx, PreHashFunction ph, byte[] pk)
+        {
+            if (ctx.Length > 255)
+            {
+                return false;
+            }
+
+            var (oid, phM) = PreHashMessage(m, ph);
+
+            byte[] mPrime = ByteArrayHelpers.ConcatBytes(
+                ByteConversions.ToByte(1, 1),
+                ByteConversions.ToByte(ctx.Length, 1),
+                ctx,
+                oid,
+                phM
+            );
+
+            bool res = _verifier.VerifyInternal(mPrime, sig, PublicKey.FromBytesArray(pk));
+
+            return res;
+        }
+
+        public bool Verify(byte[] m, byte[] sig, byte[] ctx, byte[] pk)
+        {
+            if (ctx.Length > 255)
+            {
+                return false;
+            }
+
+            byte[] mPrime = ByteArrayHelpers.ConcatBytes(
+                ByteConversions.ToByte(0, 1),
+                ByteConversions.ToByte(ctx.Length, 1),
+                ctx,
+                m
+            );
+
+            bool res = _verifier.VerifyInternal(mPrime, sig, PublicKey.FromBytesArray(pk));
+
+            return res;
         }
 
         private byte[]? GenerateAddRnd()
@@ -93,7 +127,7 @@ namespace SphincsPlus
             {
                 return null;
             }
-            
+
             byte[] addRnd = new byte[_parameters.N];
             RandomNumberGenerator.Fill(addRnd);
 
@@ -120,8 +154,8 @@ namespace SphincsPlus
                     [0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x0C],
                     Shake256.HashData(msg, 64)
                 ),
+                _ => throw new NotSupportedException("PreHashFunction not supported")
             };
         }
     }
 }
-

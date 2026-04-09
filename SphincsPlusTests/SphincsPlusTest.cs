@@ -8,7 +8,7 @@ namespace SphincsPlusTests
 {
     public class SphincsPlusTest
     {
-        public static IEnumerable<object[]> ParameterSets =>
+        public static IEnumerable<object[]> KeyGenParameterSets =>
             [
                 [SphincsPlusParametersProvider.Sha2_128s, SlhDsaParameters.slh_dsa_sha2_128s],
                 [SphincsPlusParametersProvider.Sha2_128f, SlhDsaParameters.slh_dsa_sha2_128f],
@@ -24,7 +24,7 @@ namespace SphincsPlusTests
                 [SphincsPlusParametersProvider.Shake_256f, SlhDsaParameters.slh_dsa_shake_256f],
             ];
 
-        public static IEnumerable<object[]> SignParameterSets =>
+        public static IEnumerable<object[]> ParameterSets =>
             [
                 [SphincsPlusParametersProvider.Sha2_128s, SlhDsaParameters.slh_dsa_sha2_128s, true],
                 [SphincsPlusParametersProvider.Sha2_128s, SlhDsaParameters.slh_dsa_sha2_128s, false],
@@ -53,7 +53,7 @@ namespace SphincsPlusTests
             ];
 
         [Theory]
-        [MemberData(nameof(ParameterSets))]
+        [MemberData(nameof(KeyGenParameterSets))]
         public void SphincsPlusAlgorithm_KeyGen_GeneratedKeysAreCompatibleWithReferenceImplementation(
             SphincsPlusParameters parameters,
             SlhDsaParameters bcParams
@@ -85,7 +85,7 @@ namespace SphincsPlusTests
         }
 
         [Theory]
-        [MemberData(nameof(SignParameterSets))]
+        [MemberData(nameof(ParameterSets))]
         public void SphincsPlusAlgorithm_Sign_SignIsCompatibleWithReferenceImplementation(
             SphincsPlusParameters parameters,
             SlhDsaParameters bcParams,
@@ -113,6 +113,40 @@ namespace SphincsPlusTests
             verifier.Init(false, bcPublicKey);
             verifier.BlockUpdate(message, 0, message.Length);
             bool isValid = verifier.VerifySignature(signature);
+
+            // Assert
+            Assert.True(isValid);
+        }
+
+        [Theory]
+        [MemberData(nameof(ParameterSets))]
+        public void SphincsPlusAlgorithm_Verify_VerifyIsCompatibleWithReferenceImplementation(
+            SphincsPlusParameters parameters,
+            SlhDsaParameters bcParams,
+            bool deterministic
+        )
+        {
+            // Arrange
+            SphincsPlusAlgorithm algorithm = new SphincsPlusAlgorithm(parameters, deterministic);
+
+            var bcKeyPairGenerator = new SlhDsaKeyPairGenerator();
+            bcKeyPairGenerator.Init(
+                new SlhDsaKeyGenerationParameters(new Org.BouncyCastle.Security.SecureRandom(), bcParams)
+            );
+            var keyPair = bcKeyPairGenerator.GenerateKeyPair();
+            var bcPrivateKey = (SlhDsaPrivateKeyParameters)keyPair.Private;
+            var bcPublicKey = (SlhDsaPublicKeyParameters)keyPair.Public;
+
+            byte[] pk = bcPublicKey.GetEncoded();
+            byte[] message = Encoding.UTF8.GetBytes("Document");
+
+            var signer = new SlhDsaSigner(bcParams, deterministic);
+            signer.Init(true, bcPrivateKey);
+            signer.BlockUpdate(message, 0, message.Length);
+            byte[] signature = signer.GenerateSignature();
+
+            // Act
+            bool isValid = algorithm.Verify(message, signature, [], pk);
 
             // Assert
             Assert.True(isValid);
