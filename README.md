@@ -1,5 +1,3 @@
-# !!![WORK IN PROGRESS]!!!
-
 # Master's Thesis Project
 
 ## Topic
@@ -8,10 +6,6 @@ _Comparison and implementation of selected post-quantum digital signature algori
 ## Overview
 This master's thesis project focuses on the implementation and test of selected post-quantum digital signature algorithms.
 Choosen algoritms are **CRYSTALS-Dilithium (FIPS 204)** and **SPHINCS+ (FIPS 205)**.
-
-## Current Status
-
-Currently, only **CRYSTALS-Dilithium (FIPS 204)** has been implemented. The **SPHINCS+ (FIPS 205)** implementation is planned but not yet started.
 
 ## Implementation Notes
 
