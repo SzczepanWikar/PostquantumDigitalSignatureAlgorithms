@@ -15,6 +15,8 @@ namespace DilithiumTests
                     [DilithiumParametersProvider.SecurityLevel5Parameters, MLDsaAlgorithm.MLDsa87],
                 ];
 
+            public static IEnumerable<object[]> SigningProceduresSecurityLevels => SecurityLevels.Select(e => new[] { e[0] });
+
             [Theory]
             [MemberData(nameof(SecurityLevels))]
             public void CrystalsDilithiumAlgorithm_KeyGen_GeneratedKeysAreCompatibleWithReferenceImplementation(DilithiumParameters parameters, MLDsaAlgorithm mlDsaAlgorithm)
@@ -77,6 +79,23 @@ namespace DilithiumTests
                 bool isValid = algorithm.Verify(pk, message, signature);
 
                 // Assert
+                Assert.True(isValid);
+            }
+
+            [Theory]
+            [MemberData(nameof(SigningProceduresSecurityLevels))]
+            public void CrystalsDilithiumAlgorithm_SigningProcedure(DilithiumParameters parameters)
+            {
+                CrystalsDilithiumAlgorithm algorithm = new CrystalsDilithiumAlgorithm(parameters);
+
+                var (pk, sk) = algorithm.KeyGen();
+
+                byte[] message = Encoding.UTF8.GetBytes("Document");
+
+                byte[] signature = algorithm.Sign(sk, message);
+
+                bool isValid = algorithm.Verify(pk, message, signature);
+                
                 Assert.True(isValid);
             }
         }
