@@ -9,6 +9,10 @@ namespace CrystalsDilithium.Algorithms
 
         public NttArithmetic(DilithiumParameters parameters) => _parameters = parameters;
 
+        /// <summary>
+        /// Coefficient-wise addition of two NTT-domain polynomials:
+        /// ĉ[i] = (â[i] + b̂[i]) mod q for i = 0, …, 255.
+        /// </summary>
         public int[] AddNtt(int[] aHat, int[] bHat)
         {
             int[] cHat = new int[256];
@@ -21,6 +25,10 @@ namespace CrystalsDilithium.Algorithms
             return cHat;
         }
 
+        /// <summary>
+        /// Coefficient-wise subtraction of two NTT-domain polynomials:
+        /// ĉ[i] = (â[i] − b̂[i]) mod q for i = 0, …, 255.
+        /// </summary>
         public int[] SubtractNtt(int[] aHat, int[] bHat)
         {
             int[] cHat = new int[256];
@@ -33,6 +41,10 @@ namespace CrystalsDilithium.Algorithms
             return cHat;
         }
 
+        /// <summary>
+        /// Coefficient-wise negation of an NTT-domain polynomial:
+        /// ĉ[i] = (−â[i]) mod q for i = 0, …, 255.
+        /// </summary>
         public int[] ReverseNtt(int[] aHat)
         {
             int[] cHat = new int[aHat.Length];
@@ -45,6 +57,11 @@ namespace CrystalsDilithium.Algorithms
             return cHat;
         }
 
+        /// <summary>
+        /// Coefficient-wise multiplication of two NTT-domain polynomials (Algorithm 43 — MultiplyNTTs):
+        /// ĉ[i] = (â[i] · b̂[i]) mod q for i = 0, …, 255.
+        /// Corresponds to polynomial multiplication modulo (X^256 + 1) in the standard domain.
+        /// </summary>
         public int[] MultiplyNtt(int[] aHat, int[] bHat)
         {
             int[] cHat = new int[256];
@@ -57,6 +74,10 @@ namespace CrystalsDilithium.Algorithms
             return cHat;
         }
 
+        /// <summary>
+        /// Coefficient-wise addition of two NTT-domain polynomial vectors of length
+        /// <paramref name="l"/>. Applies <see cref="AddNtt"/> to each pair of polynomials.
+        /// </summary>
         public int[][] AddVectorNtt(int l, int[][] aHat, int[][] bHat)
         {
             int[][] uHat = new int[l][];
@@ -69,6 +90,10 @@ namespace CrystalsDilithium.Algorithms
             return uHat;
         }
 
+        /// <summary>
+        /// Coefficient-wise subtraction of two NTT-domain polynomial vectors of length
+        /// <paramref name="l"/>. Applies <see cref="SubtractNtt"/> to each pair of polynomials.
+        /// </summary>
         public int[][] SubtractVectorNtt(int l, int[][] aHat, int[][] bHat)
         {
             int[][] uHat = new int[l][];
@@ -81,6 +106,10 @@ namespace CrystalsDilithium.Algorithms
             return uHat;
         }
 
+        /// <summary>
+        /// Coefficient-wise negation of an NTT-domain polynomial vector.
+        /// Applies <see cref="ReverseNtt"/> to each polynomial in <paramref name="aHat"/>.
+        /// </summary>
         public int[][] ReverseVectorNtt(int[][] aHat)
         {
             int[][] uHat = new int[aHat.Length][];
@@ -93,6 +122,11 @@ namespace CrystalsDilithium.Algorithms
             return uHat;
         }
 
+        /// <summary>
+        /// Multiplies each polynomial in the NTT-domain vector <paramref name="vHat"/> by the
+        /// scalar NTT-domain polynomial <paramref name="cHat"/> using <see cref="MultiplyNtt"/>.
+        /// Computes ŵ[i] = ĉ ⊙ v̂[i] for i = 0, …, <paramref name="l"/>−1.
+        /// </summary>
         public int[][] ScalarVectorNtt(int l, int[] cHat, int[][] vHat)
         {
             int[][] wHat = new int[l][];
@@ -105,6 +139,12 @@ namespace CrystalsDilithium.Algorithms
             return wHat;
         }
 
+        /// <summary>
+        /// Algorithm 44 — MatVecMulNTT. Multiplies the k×l NTT-domain matrix <paramref name="mHat"/>
+        /// by the NTT-domain vector <paramref name="vHat"/> of length l:
+        /// ŵ[i] = Σ_{j=0}^{l−1} m̂[i][j] ⊙ v̂[j] (mod q) for i = 0, …, k−1,
+        /// where ⊙ denotes coefficient-wise multiplication.
+        /// </summary>
         public int[][] MatrixVectorNtt(int[][][] mHat, int[][] vHat)
         {
             int[][] wHat = new int[_parameters.AMatrixDimensions.K][];

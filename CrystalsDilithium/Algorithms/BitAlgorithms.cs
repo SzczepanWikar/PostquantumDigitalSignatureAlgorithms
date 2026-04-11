@@ -13,6 +13,10 @@ namespace CrystalsDilithium.Algorithms
             _parameters = parameters;
         }
 
+        /// <summary>
+        /// Algorithm 3 — IntegerToBits. Converts a non-negative integer <paramref name="x"/>
+        /// to a bit array of length <paramref name="alpha"/> using little-endian ordering.
+        /// </summary>
         public BitArray IntegerToBits(int x, int alpha)
         {
             Debug.Assert(x >= 0, "Input must be non-negative.");
@@ -30,6 +34,10 @@ namespace CrystalsDilithium.Algorithms
             return y;
         }
 
+        /// <summary>
+        /// Algorithm 4 — BitsToInteger. Converts a bit array <paramref name="y"/> of length
+        /// <paramref name="alpha"/> (little-endian) to a non-negative integer.
+        /// </summary>
         public int BitsToInteger(BitArray y, int alpha)
         {
             Debug.Assert(y.Length > 0, "Bit array must not be empty.");
@@ -49,6 +57,10 @@ namespace CrystalsDilithium.Algorithms
             return result;
         }
 
+        /// <summary>
+        /// Algorithm 5 — IntegerToBytes. Converts a non-negative integer <paramref name="x"/>
+        /// to a byte array of length <paramref name="alpha"/> using little-endian ordering.
+        /// </summary>
         public byte[] IntegerToBytes(int x, int alpha)
         {
             Debug.Assert(x >= 0, "Input must be non-negative.");
@@ -64,6 +76,10 @@ namespace CrystalsDilithium.Algorithms
             return bytes;
         }
 
+        /// <summary>
+        /// Algorithm 6 — BitsToBytes. Packs a bit array <paramref name="y"/> into a byte array,
+        /// grouping bits in little-endian order within each byte.
+        /// </summary>
         public byte[] BitsToBytes(BitArray y)
         {
             Debug.Assert(y.Length > 0, "Bit array must not be empty.");
@@ -80,8 +96,17 @@ namespace CrystalsDilithium.Algorithms
             return bytes;
         }
 
+        /// <summary>
+        /// Algorithm 7 — BytesToBits. Unpacks a byte array <paramref name="z"/> into a bit array,
+        /// expanding each byte in little-endian order.
+        /// </summary>
         public BitArray BytesToBits(byte[] z) => new BitArray(z);
 
+        /// <summary>
+        /// Algorithm 8 — CoeffFromThreeBytes. Generates a uniform coefficient in Z_q
+        /// from three bytes by rejection sampling. Returns <see langword="null"/> when
+        /// the candidate ≥ q.
+        /// </summary>
         public int? CoeffFromThreeBytes(byte b0, byte b1, byte b2)
         {
             if (b2 > 127)
@@ -99,6 +124,11 @@ namespace CrystalsDilithium.Algorithms
             return null;
         }
 
+        /// <summary>
+        /// Algorithm 9 — CoeffFromHalfByte. Generates a uniform coefficient in S_η
+        /// from a 4-bit input by rejection sampling. Returns <see langword="null"/> when
+        /// the candidate falls outside the valid range for the current η.
+        /// </summary>
         public int? CoeffFromHalfByte(byte b)
         {
             Debug.Assert(b <= 15, "Input must be a half byte (0-15).");
@@ -116,6 +146,11 @@ namespace CrystalsDilithium.Algorithms
             return null;
         }
 
+        /// <summary>
+        /// Algorithm 10 — SimpleBitPack. Encodes a degree-255 polynomial <paramref name="w"/>
+        /// with coefficients in [0, 2^<paramref name="b"/>) into a byte array.
+        /// Each coefficient is stored as a <paramref name="b"/>-bit little-endian value.
+        /// </summary>
         public byte[] SimpleBitPack(int[] w, int b)
         {
             Debug.Assert(w.Length > 0, "Input array must not be empty.");
@@ -135,6 +170,12 @@ namespace CrystalsDilithium.Algorithms
             return res;
         }
 
+        /// <summary>
+        /// Algorithm 11 — BitPack. Encodes a degree-255 polynomial <paramref name="w"/>
+        /// with coefficients in [-<paramref name="a"/>, <paramref name="b"/>] into a byte array.
+        /// Each coefficient is stored as (<paramref name="b"/> − w[i]) in
+        /// ⌈log₂(<paramref name="a"/> + <paramref name="b"/>)⌉ bits.
+        /// </summary>
         public byte[] BitPack(int[] w, int a, int b)
         {
             Debug.Assert(w.Length > 0, "Input array must not be empty.");
@@ -151,6 +192,11 @@ namespace CrystalsDilithium.Algorithms
             return res;
         }
 
+        /// <summary>
+        /// Algorithm 12 — SimpleBitUnpack. Decodes a byte array <paramref name="v"/> into
+        /// a degree-255 polynomial with coefficients in [0, 2^<paramref name="b"/>).
+        /// Inverse of <see cref="SimpleBitPack"/>.
+        /// </summary>
         public int[] SimpleBitUnpack(byte[] v, int b)
         {
             short c = b.GetBitLength();
@@ -166,6 +212,11 @@ namespace CrystalsDilithium.Algorithms
             return w;
         }
 
+        /// <summary>
+        /// Algorithm 13 — BitUnpack. Decodes a byte array <paramref name="v"/> into
+        /// a degree-255 polynomial with coefficients in [-<paramref name="a"/>, <paramref name="b"/>].
+        /// Inverse of <see cref="BitPack"/>.
+        /// </summary>
         public int[] BitUnpack(byte[] v, int a, int b)
         {
             short c = (a + b).GetBitLength();
@@ -180,6 +231,11 @@ namespace CrystalsDilithium.Algorithms
             return w;
         }
 
+        /// <summary>
+        /// Algorithm 14 — HintBitPack. Encodes the hint vector <paramref name="h"/> (k polynomials
+        /// over {0,1}) into a byte array of length ω + k. Non-zero positions within each polynomial
+        /// are listed in ascending order, followed by an end-of-polynomial index sentinel.
+        /// </summary>
         public byte[] HintBitPack(IList<BitArray> h)
         {
             int yLength = _parameters.AMatrixDimensions.K + _parameters.Omega;
@@ -205,6 +261,12 @@ namespace CrystalsDilithium.Algorithms
             return y;
         }
 
+        /// <summary>
+        /// Algorithm 15 — HintBitUnpack. Decodes a byte array <paramref name="y"/> of length ω + k
+        /// into the hint vector (k polynomials over {0,1}). Returns <see langword="null"/> if the
+        /// encoding is malformed (out-of-order indices, exceeded ω budget, or non-zero padding).
+        /// Inverse of <see cref="HintBitPack"/>.
+        /// </summary>
         public BitArray[]? HintBitUnpack(byte[] y)
         {
             BitArray[] h = new BitArray[_parameters.AMatrixDimensions.K];

@@ -26,6 +26,13 @@ namespace CrystalsDilithium.Algorithms.Operations
             _dilithiumFunctions = new(parameters);
         }
 
+        /// <summary>
+        /// Algorithm 6 — ML-DSA.KeyGen_internal. Derives the key pair from the 32-byte seed
+        /// <paramref name="ksi"/>: expands ξ into (ρ, ρ', K), samples Â via
+        /// <see cref="PseudoRandomSampling.ExpandA"/>, samples (s1, s2) via
+        /// <see cref="PseudoRandomSampling.ExpandS"/>, computes t = NTT⁻¹(Â·NTT(s1)) + s2,
+        /// splits t into (t1, t0) with Power2Round, then encodes and returns (pk, sk).
+        /// </summary>
         internal (byte[] pk, byte[] sk) KeyGenInternal(byte[] ksi)
         {
             (byte[] rho, byte[] rhoPrim, byte[] k) = ExtraxtDataFromSeed(ksi);
@@ -48,6 +55,10 @@ namespace CrystalsDilithium.Algorithms.Operations
             return (pk, sk);
         }
 
+        /// <summary>
+        /// Hashes ξ ‖ IntToBytes(k, 1) ‖ IntToBytes(l, 1) with SHAKE-256 (128 bytes) and
+        /// splits the output into ρ (bytes 0–31), ρ' (bytes 32–95), K (bytes 96–127).
+        /// </summary>
         private (byte[] rho, byte[] rhoPrim, byte[] k) ExtraxtDataFromSeed(byte[] ksi)
         {
             byte[] hashSource = ByteArrayHelpers.ConcatBytes(
@@ -70,6 +81,9 @@ namespace CrystalsDilithium.Algorithms.Operations
             return (rho, rhoPrim, k);
         }
 
+        /// <summary>
+        /// Computes t = NTT⁻¹(Â · NTT(s1)) + s2 in the standard (non-NTT) domain.
+        /// </summary>
         private int[][] CalcT(int[][][] aDash, int[][] s1, int[][] s2)
         {
             int[][] s1Dash = Ntt.ForwardNtt(s1);

@@ -24,6 +24,14 @@ namespace CrystalsDilithium.Algorithms.Operations
             _dilithiumFunctions = new(parameters);
         }
 
+        /// <summary>
+        /// Algorithm 7 — ML-DSA.Sign_internal. Produces a signature for <paramref name="message"/>
+        /// using secret key <paramref name="sk"/> and randomness <paramref name="rnd"/>.
+        /// Decodes sk, computes μ and ρ'', then runs the rejection-sampling loop: samples masking
+        /// vector y, computes w = NTT⁻¹(Â·NTT(y)), derives challenge c̃ from (μ, w1Encode(HighBits(w))),
+        /// samples c via SampleInBall, and checks norm bounds on z and r0. Repeats until all
+        /// bounds pass, then encodes and returns σ = SigEncode(c̃, z mod± q, h).
+        /// </summary>
         public byte[] SignInternal(byte[] sk, BitArray message, byte[] rnd)
         {
             DecodedSecretKeyDto decodedSk = _encoder.SkDecode(sk);
@@ -71,6 +79,12 @@ namespace CrystalsDilithium.Algorithms.Operations
             return sigma;
         }
 
+        /// <summary>
+        /// Single iteration of the Sign_internal rejection-sampling loop. Computes z = y + cs1,
+        /// r0 = LowBits(w − cs2), and ct0 = c·t0. Returns (<see langword="null"/>, <see langword="null"/>)
+        /// and triggers a retry if ‖z‖∞ ≥ γ₁ − β, ‖r0‖∞ ≥ γ₂ − β, ‖ct0‖∞ ≥ γ₂,
+        /// or the number of hints exceeds ω. Otherwise returns (z, h).
+        /// </summary>
         private (int[][]? z, BitArray[]? h) SampleZAndH(
             int[][] t0Hat,
             int[][] y,
@@ -120,6 +134,10 @@ namespace CrystalsDilithium.Algorithms.Operations
             return (z, h);
         }
 
+        /// <summary>
+        /// Computes μ = SHAKE-256(tr ‖ M', 64) and ρ'' = SHAKE-256(K ‖ rnd ‖ μ, 64),
+        /// where M' is the padded message bit-string and tr is the public-key hash from the secret key.
+        /// </summary>
         private (byte[] mi, byte[] rhoBis) GeneratePrivateRandomSeed(
             DecodedSecretKeyDto decodedSk,
             BitArray message,
@@ -137,6 +155,10 @@ namespace CrystalsDilithium.Algorithms.Operations
             return (mi, rhoBis);
         }
 
+        /// <summary>
+        /// Reduces each coefficient of z to the symmetric representative in (−q/2, q/2]
+        /// using ModPlusMinus before encoding into the signature.
+        /// </summary>
         private int[][] CalcModulo(int[][] z)
         {
             int[][] res = new int[z.Length][];
@@ -154,6 +176,10 @@ namespace CrystalsDilithium.Algorithms.Operations
             return res;
         }
 
+        /// <summary>
+        /// Computes the hint vector h = MakeHint(−ct0, w − cs2 + ct0), which allows the verifier
+        /// to recover HighBits(w − cs2 + ct0) from HighBits(w − cs2).
+        /// </summary>
         private BitArray[] CalcHint(int[][] w, int[][] cs2Norm, int[][] ct0Norm)
         {
             int[][] r = _nttArithmetic.AddVectorNtt(

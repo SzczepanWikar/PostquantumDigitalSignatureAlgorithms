@@ -266,6 +266,10 @@ namespace CrystalsDilithium.Algorithms
 
         private const int F = 8347681;
 
+        /// <summary>
+        /// Algorithm 41 — NTT (polynomial vector variant). Applies <see cref="ForwardNtt(int[])"/>
+        /// to each polynomial in <paramref name="w"/> and returns the result vector in NTT domain.
+        /// </summary>
         public static int[][] ForwardNtt(int[][] w)
         {
             int[][] res = new int[w.Length][];
@@ -278,6 +282,10 @@ namespace CrystalsDilithium.Algorithms
             return res;
         }
 
+        /// <summary>
+        /// Algorithm 42 — NTT⁻¹ (polynomial vector variant). Applies <see cref="InverseNtt(int[])"/>
+        /// to each polynomial in <paramref name="wHat"/> and returns the result vector in standard domain.
+        /// </summary>
         public static int[][] InverseNtt(int[][] wHat)
         {
             int[][] res = new int[wHat.Length][];
@@ -290,6 +298,12 @@ namespace CrystalsDilithium.Algorithms
             return res;
         }
 
+        /// <summary>
+        /// Algorithm 41 — NTT. Computes the forward Number Theoretic Transform of polynomial
+        /// <paramref name="w"/> ∈ R_q using the precomputed zeta table. Iterates from the largest
+        /// half-length (128) down to 1 in a Cooley-Tukey butterfly structure, consuming zetas
+        /// ζ^{BitRev₈(1)}, …, ζ^{BitRev₈(255)} in order. Result is the NTT representation ŵ ∈ R_q.
+        /// </summary>
         public static int[] ForwardNtt(int[] w)
         {
             int[] wHat = new int[w.Length];
@@ -324,6 +338,13 @@ namespace CrystalsDilithium.Algorithms
             return wHat;
         }
 
+        /// <summary>
+        /// Algorithm 42 — NTT⁻¹. Computes the inverse Number Theoretic Transform of
+        /// <paramref name="wHat"/> ∈ R_q using the precomputed zeta table traversed in reverse.
+        /// Uses a Gentleman-Sande butterfly structure iterating from half-length 1 up to 128,
+        /// then multiplies each coefficient by f = 256⁻¹ mod q (= <c>8347681</c>) to normalise.
+        /// Inverse of <see cref="ForwardNtt(int[])"/>.
+        /// </summary>
         public static int[] InverseNtt(int[] wHat)
         {
             int[] w = new int[wHat.Length];

@@ -24,6 +24,13 @@ namespace CrystalsDilithium.Algorithms.Operations
             _nttArithmetic = new(parameters);
         }
 
+        /// <summary>
+        /// Algorithm 8 — ML-DSA.Verify_internal. Verifies signature <paramref name="sigma"/>
+        /// against public key <paramref name="pk"/> and padded message <paramref name="mPrim"/>.
+        /// Decodes pk and σ, rejects if h is malformed, computes μ, reconstructs
+        /// w'1 = UseHint(h, HighBits(Az − c·t1·2^d)), then accepts iff ‖z‖∞ &lt; γ₁ − β
+        /// and c̃' = SHAKE-256(μ ‖ w1Encode(w'1), λ/4) equals c̃ from the signature.
+        /// </summary>
         public bool VerifyInternal(byte[] pk, BitArray mPrim, byte[] sigma)
         {
             var (rho, t1) = _encoder.PkDecode(pk);
@@ -50,6 +57,10 @@ namespace CrystalsDilithium.Algorithms.Operations
                 && cWavePrim.SequenceEqual(dto.CWave);
         }
 
+        /// <summary>
+        /// Computes μ = SHAKE-256(tr ‖ M', 64), where tr is the public-key hash
+        /// and M' is the padded message bit-string.
+        /// </summary>
         private byte[] CalcMi(BitArray mPrim, byte[] tr)
         {
             BitArray trBits = new BitArray(tr);
@@ -60,6 +71,10 @@ namespace CrystalsDilithium.Algorithms.Operations
             return mi;
         }
 
+        /// <summary>
+        /// Computes the approximation w' = NTT⁻¹(Az − c·NTT(t1·2^d)) used as input to UseHint.
+        /// Delegates scaling of t1 by 2^d and its NTT to <see cref="CalcT1"/>.
+        /// </summary>
         private int[][] CalcApproximatedW1Prim(int[][] t1, int[] c, int[][] az) =>
             Ntt.InverseNtt(
                 _nttArithmetic.SubtractVectorNtt(
@@ -69,6 +84,10 @@ namespace CrystalsDilithium.Algorithms.Operations
                 )
             );
 
+        /// <summary>
+        /// Scales each t1 coefficient by 2^d (left shift by d bits) and returns the result
+        /// in NTT domain. Reconstructs the high part of the public key commitment t·2^d = t1·2^d + t0.
+        /// </summary>
         private int[][] CalcT1(int[][] t1)
         {
             int[][] res = new int[t1.Length][];
@@ -86,6 +105,10 @@ namespace CrystalsDilithium.Algorithms.Operations
             return Ntt.ForwardNtt(res);
         }
 
+        /// <summary>
+        /// Computes c̃' = SHAKE-256(μ ‖ w1Encode(w'1), λ/4) to be compared against
+        /// the challenge hash c̃ extracted from the signature.
+        /// </summary>
         private byte[] CalcCWave(byte[] mi, int[][] wPrim) =>
             Shake256.HashData(
                 ByteArrayHelpers.ConcatBytes(mi, _encoder.W1Encode(wPrim)),

@@ -26,6 +26,10 @@ namespace CrystalsDilithium.Algorithms
             _twoToPowerOfDMinusOne = 1 << (_parameters.D - 1);
         }
 
+        /// <summary>
+        /// Algorithm 16 — pkEncode. Encodes the public key as ρ ‖ SimpleBitPack(t1[0]) ‖ … ‖ SimpleBitPack(t1[k−1]),
+        /// where each t1[i] polynomial is packed using ⌈log₂(q/2^d)⌉ bits per coefficient.
+        /// </summary>
         public byte[] PkEncode(byte[] rho, int[][] t1)
         {
             Debug.Assert(rho.Length == 32, "Rho must be 32 bytes long.");
@@ -44,6 +48,10 @@ namespace CrystalsDilithium.Algorithms
             return pk;
         }
 
+        /// <summary>
+        /// Algorithm 17 — pkDecode. Decodes a public key byte string into ρ and the polynomial
+        /// vector t1. Inverse of <see cref="PkEncode"/>.
+        /// </summary>
         public (byte[] rho, int[][] t1) PkDecode(byte[] pk)
         {
             byte[] rho = pk.Take(32).ToArray();
@@ -65,6 +73,10 @@ namespace CrystalsDilithium.Algorithms
             return (rho, t1);
         }
 
+        /// <summary>
+        /// Algorithm 18 — skEncode. Encodes the secret key as
+        /// ρ ‖ K ‖ tr ‖ BitPack(s1[0], η, η) ‖ … ‖ BitPack(s2[k−1], η, η) ‖ BitPack(t0[0], 2^(d−1)−1, 2^(d−1)) ‖ …
+        /// </summary>
         public byte[] SkEncode(DecodedSecretKeyDto dto)
         {
             byte[] sk = ByteArrayHelpers.ConcatBytes(dto.Rho, dto.K, dto.Tr);
@@ -96,6 +108,10 @@ namespace CrystalsDilithium.Algorithms
             return sk.ToArray();
         }
 
+        /// <summary>
+        /// Algorithm 19 — skDecode. Decodes a secret key byte string into (ρ, K, tr, s1, s2, t0).
+        /// Inverse of <see cref="SkEncode"/>.
+        /// </summary>
         public DecodedSecretKeyDto SkDecode(byte[] sk)
         {
             int bitLenEta = BitLength.GetBitLength(2 * _parameters.Eta); // bitlen(2η)
@@ -154,6 +170,10 @@ namespace CrystalsDilithium.Algorithms
             return new(rho, K, tr, s1, s2, t0);
         }
 
+        /// <summary>
+        /// Algorithm 20 — sigEncode. Encodes a signature as
+        /// c̃ ‖ BitPack(z[0], γ₁−1, γ₁) ‖ … ‖ BitPack(z[l−1], γ₁−1, γ₁) ‖ HintBitPack(h).
+        /// </summary>
         public byte[] SigEncode(SignatureDto dto)
         {
             int l = dto.Z.Length;
@@ -179,6 +199,12 @@ namespace CrystalsDilithium.Algorithms
             return sigma;
         }
 
+        /// <summary>
+        /// Algorithm 21 — sigDecode. Decodes a signature byte string into (c̃, z, h).
+        /// Returns a <see cref="SignatureDto"/> with h = <see langword="null"/> when
+        /// <see cref="BitAlgorithms.HintBitUnpack"/> detects a malformed hint encoding.
+        /// Inverse of <see cref="SigEncode"/>.
+        /// </summary>
         public SignatureDto SigDecode(byte[] sigma)
         {
             int l = _parameters.AMatrixDimensions.L;
@@ -218,6 +244,11 @@ namespace CrystalsDilithium.Algorithms
             return new(cWave, z, h);
         }
 
+        /// <summary>
+        /// Algorithm 22 — w1Encode. Encodes the polynomial vector w1 (with coefficients in
+        /// [0, (q−1)/(2γ₂) − 1]) into a byte string using SimpleBitPack per polynomial.
+        /// Used during signing to produce the verifier's challenge input.
+        /// </summary>
         public byte[] W1Encode(int[][] w1)
         {
             int k = _parameters.AMatrixDimensions.K;

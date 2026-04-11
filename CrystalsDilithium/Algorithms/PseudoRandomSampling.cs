@@ -16,6 +16,12 @@ namespace CrystalsDilithium.Algorithms
             _bitAlgorithms = new BitAlgorithms(parameters);
         }
 
+        /// <summary>
+        /// Algorithm 25 — SampleInBall. Deterministically samples a polynomial c ∈ R_q with
+        /// exactly τ non-zero coefficients, each ±1, from the seed <paramref name="rho"/>.
+        /// Uses SHAKE-256: the first 8 output bytes supply the sign bits, subsequent bytes
+        /// provide candidate positions via rejection sampling (Fisher-Yates shuffle).
+        /// </summary>
         public int[] SampleInBall(byte[] rho)
         {
             int[] c = new int[256];
@@ -57,6 +63,12 @@ namespace CrystalsDilithium.Algorithms
             return c;
         }
 
+        /// <summary>
+        /// Algorithm 26 — RejNTTPoly. Samples a uniform polynomial â ∈ T_q in NTT domain
+        /// from the seed <paramref name="rho"/> using SHAKE-128 and rejection sampling via
+        /// <see cref="BitAlgorithms.CoeffFromThreeBytes"/>. Reads 3 bytes per candidate
+        /// and rejects values ≥ q.
+        /// </summary>
         public int[] RejNTTPoly(byte[] rho)
         {
             short j = 0;
@@ -81,6 +93,12 @@ namespace CrystalsDilithium.Algorithms
             return aDash;
         }
 
+        /// <summary>
+        /// Algorithm 27 — RejBoundedPoly. Samples a polynomial with coefficients in S_η
+        /// from the seed <paramref name="rho"/> using SHAKE-256 and rejection sampling via
+        /// <see cref="BitAlgorithms.CoeffFromHalfByte"/>. Each output byte yields two
+        /// 4-bit candidates (low and high nibble); candidates outside S_η are rejected.
+        /// </summary>
         public int[] RejBoundedPoly(byte[] rho)
         {
             short j = 0;
@@ -112,6 +130,11 @@ namespace CrystalsDilithium.Algorithms
             return a;
         }
 
+        /// <summary>
+        /// Algorithm 32 — ExpandA. Derives the k×l matrix  of NTT-domain polynomials Â from
+        /// the seed <paramref name="rho"/>. Entry Â[r][s] is obtained by calling
+        /// <see cref="RejNTTPoly"/> with seed ρ ‖ IntToBytes(s, 1) ‖ IntToBytes(r, 1).
+        /// </summary>
         public int[][][] ExpandA(byte[] rho)
         {
             int[][][] aHat = InitAHatMatrix();
@@ -131,6 +154,12 @@ namespace CrystalsDilithium.Algorithms
             return aHat;
         }
 
+        /// <summary>
+        /// Algorithm 33 — ExpandS. Derives the secret polynomial vectors s1 ∈ S_η^l and
+        /// s2 ∈ S_η^k from the seed <paramref name="rho"/>. Each polynomial is obtained by
+        /// calling <see cref="RejBoundedPoly"/> with seed ρ' ‖ IntToBytes(r, 2), where r
+        /// runs 0…l−1 for s1 and l…l+k−1 for s2.
+        /// </summary>
         public (int[][] s1, int[][] s2) ExpandS(byte[] rho)
         {
             int[][] s1 = new int[_parameters.AMatrixDimensions.L][];
@@ -157,6 +186,12 @@ namespace CrystalsDilithium.Algorithms
             return (s1, s2);
         }
 
+        /// <summary>
+        /// Algorithm 34 — ExpandMask. Derives the masking vector y ∈ S_{γ₁−1}^l from the
+        /// seed <paramref name="rho"/> and nonce <paramref name="mi"/>. Each polynomial y[r]
+        /// is produced by expanding seed ρ ‖ IntToBytes(κ + r, 2) with SHAKE-256 and decoding
+        /// via <see cref="BitAlgorithms.BitUnpack"/> with bounds (γ₁−1, γ₁).
+        /// </summary>
         public int[][] ExpandMask(byte[] rho, int mi)
         {
             Debug.Assert(mi >= 0, "Mask index must be non negative.");
