@@ -1,5 +1,6 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
+using Core.PreHashing;
 using CrystalsDilithium;
 
 namespace DilithiumTests
@@ -16,6 +17,11 @@ namespace DilithiumTests
                 ];
 
             public static IEnumerable<object[]> SigningProceduresSecurityLevels => SecurityLevels.Select(e => new[] { e[0] });
+
+            public static IEnumerable<object[]> SigningProcedurePreHashSecurityLevels =>
+                from e in SigningProceduresSecurityLevels
+                from ph in Enum.GetValues<PreHashFunction>()
+                select new object[] { e[0], ph };
 
             [Theory]
             [MemberData(nameof(SecurityLevels))]
@@ -95,7 +101,27 @@ namespace DilithiumTests
                 byte[] signature = algorithm.Sign(sk, message);
 
                 bool isValid = algorithm.Verify(pk, message, signature);
-                
+
+                Assert.True(isValid);
+            }
+
+            [Theory]
+            [MemberData(nameof(SigningProcedurePreHashSecurityLevels))]
+            public void CrystalsDilithiumAlgorithm_SigningProcedure_PreHash(
+                DilithiumParameters parameters,
+                PreHashFunction preHashFunction
+            )
+            {
+                CrystalsDilithiumAlgorithm algorithm = new CrystalsDilithiumAlgorithm(parameters);
+
+                var (pk, sk) = algorithm.KeyGen();
+
+                byte[] message = Encoding.UTF8.GetBytes("Document");
+
+                byte[] signature = algorithm.Sign(sk, message, preHashFunction);
+
+                bool isValid = algorithm.Verify(pk, message, signature, preHashFunction);
+
                 Assert.True(isValid);
             }
         }

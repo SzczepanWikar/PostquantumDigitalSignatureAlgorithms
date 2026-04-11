@@ -1,4 +1,5 @@
 using System.Text;
+using Core.PreHashing;
 using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Crypto.Signers;
@@ -25,104 +26,9 @@ namespace SphincsPlusTests
             ];
 
         public static IEnumerable<object[]> ParameterSets =>
-            [
-                [SphincsPlusParametersProvider.Sha2_128s, SlhDsaParameters.slh_dsa_sha2_128s, true],
-                [
-                    SphincsPlusParametersProvider.Sha2_128s,
-                    SlhDsaParameters.slh_dsa_sha2_128s,
-                    false,
-                ],
-                [SphincsPlusParametersProvider.Sha2_128f, SlhDsaParameters.slh_dsa_sha2_128f, true],
-                [
-                    SphincsPlusParametersProvider.Sha2_128f,
-                    SlhDsaParameters.slh_dsa_sha2_128f,
-                    false,
-                ],
-                [
-                    SphincsPlusParametersProvider.Shake_128s,
-                    SlhDsaParameters.slh_dsa_shake_128s,
-                    true,
-                ],
-                [
-                    SphincsPlusParametersProvider.Shake_128s,
-                    SlhDsaParameters.slh_dsa_shake_128s,
-                    false,
-                ],
-                [
-                    SphincsPlusParametersProvider.Shake_128f,
-                    SlhDsaParameters.slh_dsa_shake_128f,
-                    true,
-                ],
-                [
-                    SphincsPlusParametersProvider.Shake_128f,
-                    SlhDsaParameters.slh_dsa_shake_128f,
-                    false,
-                ],
-                [SphincsPlusParametersProvider.Sha2_192s, SlhDsaParameters.slh_dsa_sha2_192s, true],
-                [
-                    SphincsPlusParametersProvider.Sha2_192s,
-                    SlhDsaParameters.slh_dsa_sha2_192s,
-                    false,
-                ],
-                [SphincsPlusParametersProvider.Sha2_192f, SlhDsaParameters.slh_dsa_sha2_192f, true],
-                [
-                    SphincsPlusParametersProvider.Sha2_192f,
-                    SlhDsaParameters.slh_dsa_sha2_192f,
-                    false,
-                ],
-                [
-                    SphincsPlusParametersProvider.Shake_192s,
-                    SlhDsaParameters.slh_dsa_shake_192s,
-                    true,
-                ],
-                [
-                    SphincsPlusParametersProvider.Shake_192s,
-                    SlhDsaParameters.slh_dsa_shake_192s,
-                    false,
-                ],
-                [
-                    SphincsPlusParametersProvider.Shake_192f,
-                    SlhDsaParameters.slh_dsa_shake_192f,
-                    true,
-                ],
-                [
-                    SphincsPlusParametersProvider.Shake_192f,
-                    SlhDsaParameters.slh_dsa_shake_192f,
-                    false,
-                ],
-                [SphincsPlusParametersProvider.Sha2_256s, SlhDsaParameters.slh_dsa_sha2_256s, true],
-                [
-                    SphincsPlusParametersProvider.Sha2_256s,
-                    SlhDsaParameters.slh_dsa_sha2_256s,
-                    false,
-                ],
-                [SphincsPlusParametersProvider.Sha2_256f, SlhDsaParameters.slh_dsa_sha2_256f, true],
-                [
-                    SphincsPlusParametersProvider.Sha2_256f,
-                    SlhDsaParameters.slh_dsa_sha2_256f,
-                    false,
-                ],
-                [
-                    SphincsPlusParametersProvider.Shake_256s,
-                    SlhDsaParameters.slh_dsa_shake_256s,
-                    true,
-                ],
-                [
-                    SphincsPlusParametersProvider.Shake_256s,
-                    SlhDsaParameters.slh_dsa_shake_256s,
-                    false,
-                ],
-                [
-                    SphincsPlusParametersProvider.Shake_256f,
-                    SlhDsaParameters.slh_dsa_shake_256f,
-                    true,
-                ],
-                [
-                    SphincsPlusParametersProvider.Shake_256f,
-                    SlhDsaParameters.slh_dsa_shake_256f,
-                    false,
-                ],
-            ];
+            from p in KeyGenParameterSets
+            from deterministic in new[] { true, false }
+            select new object[] { p[0], p[1], deterministic };
 
         public static IEnumerable<object[]> SigningProcedureParameterSets =>
             ParameterSets.Select(p => new object[] { p[0], p[2] });

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Security.Cryptography;
 using Core.Helpers;
+using Core.PreHashing;
 using CrystalsDilithium.Algorithms;
 using CrystalsDilithium.Algorithms.Operations;
 
@@ -106,6 +107,41 @@ namespace CrystalsDilithium
         }
 
         /// <summary>
+        /// Algorithm 4 — HashML-DSA.Sign. Signs message <paramref name="m"/> with an empty
+        /// context string. Delegates to <see cref="Sign(byte[], byte[], byte[], PreHashFunction)"/>.
+        /// </summary>
+        public byte[] Sign(byte[] sk, byte[] m, PreHashFunction ph) => Sign(sk, m, [], ph);
+
+        /// <summary>
+        /// Algorithm 4 — HashML-DSA.Sign. Builds the padded message
+        /// M' = 0x01 ‖ |ctx| ‖ ctx ‖ OID(PH) ‖ PH(M), samples a fresh 32-byte randomness rnd,
+        /// and calls ML-DSA.Sign_internal(sk, M', rnd). Throws if |ctx| > 255.
+        /// </summary>
+        public byte[] Sign(byte[] sk, byte[] m, byte[] ctx, PreHashFunction ph)
+        {
+            if (ctx.Length > 255)
+            {
+                throw new ArgumentException("Context string is to long.");
+            }
+
+            byte[] rnd = RandomNumberGenerator.GetBytes(32);
+
+            var (oid, phM) = PreHasher.PreHashMessage(m, ph);
+
+            byte[] mPrimeBytes = ByteArrayHelpers.ConcatBytes(
+                _bitAlgorithms.IntegerToBytes(1, 1),
+                _bitAlgorithms.IntegerToBytes(ctx.Length, 1),
+                ctx,
+                oid,
+                phM
+            );
+
+            BitArray mPrim = _bitAlgorithms.BytesToBits(mPrimeBytes);
+
+            return _signer.SignInternal(sk, mPrim, rnd);
+        }
+
+        /// <summary>
         /// Algorithm 3 — ML-DSA.Verify. Verifies signature <paramref name="sigma"/> for
         /// bit-string message <paramref name="m"/> with an empty context string.
         /// Delegates to <see cref="Verify(byte[], BitArray, byte[], byte[])"/>.
@@ -156,6 +192,41 @@ namespace CrystalsDilithium
             bool res = _verifier.VerifyInternal(pk, messagePrim, sigma);
 
             return res;
+        }
+
+        /// <summary>
+        /// Algorithm 5 — HashML-DSA.Verify. Verifies signature for <paramref name="m"/> with an
+        /// empty context string. Delegates to
+        /// <see cref="Verify(byte[], byte[], byte[], byte[], PreHashFunction)"/>.
+        /// </summary>
+        public bool Verify(byte[] pk, byte[] m, byte[] sigma, PreHashFunction ph) =>
+            Verify(pk, m, sigma, [], ph);
+
+        /// <summary>
+        /// Algorithm 5 — HashML-DSA.Verify. Builds the padded message
+        /// M' = 0x01 ‖ |ctx| ‖ ctx ‖ OID(PH) ‖ PH(M) and calls ML-DSA.Verify_internal(pk, M', σ).
+        /// Throws if |ctx| > 255. Returns <see langword="true"/> iff the signature is valid.
+        /// </summary>
+        public bool Verify(byte[] pk, byte[] m, byte[] sigma, byte[] ctx, PreHashFunction ph)
+        {
+            if (ctx.Length > 255)
+            {
+                throw new ArgumentException("Context string is to long.");
+            }
+
+            var (oid, phM) = PreHasher.PreHashMessage(m, ph);
+
+            byte[] mPrimeBytes = ByteArrayHelpers.ConcatBytes(
+                _bitAlgorithms.IntegerToBytes(1, 1),
+                _bitAlgorithms.IntegerToBytes(ctx.Length, 1),
+                ctx,
+                oid,
+                phM
+            );
+
+            BitArray mPrim = _bitAlgorithms.BytesToBits(mPrimeBytes);
+
+            return _verifier.VerifyInternal(pk, mPrim, sigma);
         }
     }
 }

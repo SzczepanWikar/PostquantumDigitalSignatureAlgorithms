@@ -1,4 +1,4 @@
-namespace SphincsPlus
+namespace Core.PreHashing
 {
     public enum PreHashFunction
     {
