@@ -16,6 +16,12 @@ namespace SphincsPlus.Algorithms
             _xmss = xmss;
         }
 
+        /// <summary>
+        /// Algorithm 12 — ht_sign. Produces a hypertree signature SIG_HT of
+        /// d·(h' + len)·n bytes on message <paramref name="m"/>. Signs m with the XMSS tree
+        /// at layer 0 and tree index <paramref name="idxTree"/>, then uses the resulting XMSS root
+        /// as the message for each subsequent layer, advancing idxTree rightward by h' bits per layer.
+        /// </summary>
         public byte[] Sign(byte[] m, byte[] skSeed, byte[] pkSeed, ulong idxTree, int idxLeaf)
         {
             Adrs adrs = new(ByteConversions.ToByte(0, 32));
@@ -45,6 +51,13 @@ namespace SphincsPlus.Algorithms
             return sigHt;
         }
 
+        /// <summary>
+        /// Algorithm 13 — ht_verify. Verifies hypertree signature <paramref name="sigHt"/> on
+        /// message <paramref name="m"/>. Recovers the XMSS root at layer 0 via
+        /// <see cref="Xmss.PkFromSig"/>, then propagates the root upward through d layers,
+        /// advancing idxTree rightward by h' bits per layer. Returns <see langword="true"/> iff
+        /// the final recovered root equals <paramref name="pkRoot"/>.
+        /// </summary>
         public bool Verify(
             byte[] m,
             byte[] sigHt,
@@ -75,6 +88,10 @@ namespace SphincsPlus.Algorithms
             return node.SequenceEqual(pkRoot);
         }
 
+        /// <summary>
+        /// Extracts the j-th XMSS signature from the flat SIG_HT byte array.
+        /// Each XMSS signature occupies (len + h')·n bytes.
+        /// </summary>
         private byte[] GetXmssSignature(byte[] sig, int j) =>
             sig[
                 (j * ((_parameters.Len + _parameters.HPrime) * _parameters.N))..(

@@ -25,15 +25,11 @@ namespace SphincsPlus.Algorithms.Operations
         }
 
         /// <summary>
-        /// Algorithm 19 — slh_sign_internal.
+        /// Algorithm 19 — slh_sign_internal. Computes R = PRF_msg(SK.prf, opt_rand, M)
+        /// (opt_rand = addrnd if hedged, PK.seed if deterministic), extracts (idxTree, idxLeaf, md)
+        /// from H_msg, produces SIG_FORS via fors_sign and pkFors via fors_pkFromSig, then signs
+        /// pkFors through all d hypertree layers via ht_sign. Returns σ = R ‖ SIG_FORS ‖ SIG_HT.
         /// </summary>
-        /// <param name="m">Message to sign.</param>
-        /// <param name="sk">Encoded private key: SK.seed ‖ SK.prf ‖ PK.seed ‖ PK.root (4n bytes).</param>
-        /// <param name="addrnd">
-        /// Additional randomness for the hedged variant (n bytes).
-        /// Pass null for the deterministic variant — opt_rand is set to PK.seed.
-        /// </param>
-        /// <returns>SLH-DSA signature: R ‖ SIG_FORS ‖ SIG_HT.</returns>
         internal byte[] SignInternal(byte[] m, SecretKey sk, byte[]? addrnd)
         {
             byte[] optRand = addrnd ?? sk.PkSeed;

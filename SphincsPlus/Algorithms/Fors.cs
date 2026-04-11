@@ -14,13 +14,10 @@ namespace SphincsPlus.Algorithms
         }
 
         /// <summary>
-        /// Algorithm 14: fors_skGen — generates a FORS private-key value.
+        /// Algorithm 14 — fors_skGen. Generates the FORS secret-key value at index
+        /// <paramref name="idx"/> by applying PRF to a FORS_PRF address derived from
+        /// <paramref name="adrs"/>. Returns an n-byte secret value.
         /// </summary>
-        /// <param name="skSeed">Secret seed SK.seed.</param>
-        /// <param name="pkSeed">Public seed PK.seed.</param>
-        /// <param name="adrs">Address with layer=0, tree address, type=FORS_TREE, key pair address set.</param>
-        /// <param name="idx">Index of the secret value within the FORS trees.</param>
-        /// <returns>n-byte FORS private-key value.</returns>
         public byte[] SkGen(byte[] skSeed, byte[] pkSeed, Adrs adrs, int idx)
         {
             Adrs skAdrs = new Adrs(adrs);
@@ -34,14 +31,10 @@ namespace SphincsPlus.Algorithms
         }
 
         /// <summary>
-        /// Algorithm 15: fors_node — computes the root of a Merkle subtree of FORS public values.
+        /// Algorithm 15 — fors_node. Recursively computes the n-byte root of the Merkle subtree
+        /// of height <paramref name="z"/> rooted at node index <paramref name="i"/>. At height 0
+        /// hashes the secret-key value via F; at height z > 0 hashes the two child roots via H.
         /// </summary>
-        /// <param name="skSeed">Secret seed SK.seed.</param>
-        /// <param name="i">Target node index.</param>
-        /// <param name="z">Target node height within the FORS Merkle tree.</param>
-        /// <param name="pkSeed">Public seed PK.seed.</param>
-        /// <param name="adrs">Address with layer=0, tree address, type=FORS_TREE, key pair address set.</param>
-        /// <returns>n-byte root node.</returns>
         public byte[] Node(byte[] skSeed, int i, int z, byte[] pkSeed, Adrs adrs)
         {
             if (z == 0)
@@ -62,13 +55,11 @@ namespace SphincsPlus.Algorithms
         }
 
         /// <summary>
-        /// Algorithm 16: fors_sign — generates a FORS signature on a message digest.
+        /// Algorithm 16 — fors_sign. Produces a FORS signature SIG_FORS of k·(1+a)·n bytes
+        /// on message digest <paramref name="md"/>. Splits md into k indices via base_2b, then
+        /// for each tree i concatenates the secret-key value at the chosen leaf with the a-node
+        /// authentication path produced by <see cref="Node"/>.
         /// </summary>
-        /// <param name="md">Message digest of ⌈k·a/8⌉ bytes (k·a bits used).</param>
-        /// <param name="skSeed">Secret seed SK.seed.</param>
-        /// <param name="pkSeed">Public seed PK.seed.</param>
-        /// <param name="adrs">Address with layer=0, tree address, type=FORS_TREE, key pair address set.</param>
-        /// <returns>FORS signature SIG_FORS of k·(1+a)·n bytes.</returns>
         public byte[] Sign(byte[] md, byte[] skSeed, byte[] pkSeed, Adrs adrs)
         {
             byte[] sigFors = [];
@@ -101,13 +92,11 @@ namespace SphincsPlus.Algorithms
         }
 
         /// <summary>
-        /// Algorithm 17: fors_pkFromSig — computes a FORS public key from a FORS signature.
+        /// Algorithm 17 — fors_pkFromSig. Recomputes the n-byte FORS public key from signature
+        /// <paramref name="sigFors"/> and message digest <paramref name="md"/>. For each of the k
+        /// trees: hashes the secret-key leaf via F, then walks up the a authentication-path nodes
+        /// via H. Combines the k tree roots with T_k into the final public key.
         /// </summary>
-        /// <param name="sigFors">FORS signature SIG_FORS of k·(1+a)·n bytes.</param>
-        /// <param name="md">Message digest of ⌈k·a/8⌉ bytes (k·a bits used).</param>
-        /// <param name="pkSeed">Public seed PK.seed.</param>
-        /// <param name="adrs">Address with layer=0, tree address, type=FORS_TREE, key pair address set.</param>
-        /// <returns>n-byte FORS public key.</returns>
         public byte[] PkFromSig(byte[] sigFors, byte[] md, byte[] pkSeed, Adrs adrs)
         {
             int[] indices = ByteConversions.Base2b(md, _parameters.A, _parameters.K);
@@ -149,12 +138,21 @@ namespace SphincsPlus.Algorithms
             return pk;
         }
 
+        /// <summary>
+        /// Extracts the n-byte secret-key value for tree <paramref name="i"/> from the flat
+        /// SIG_FORS byte array. Each tree occupies (1 + a)·n bytes; the sk is the first n bytes.
+        /// </summary>
         private byte[] GetSk(byte[] sigFors, int i)
         {
             int offset = i * (1 + _parameters.A) * _parameters.N;
             return sigFors[offset..(offset + _parameters.N)];
         }
 
+        /// <summary>
+        /// Extracts the a authentication-path nodes for tree <paramref name="i"/> from the flat
+        /// SIG_FORS byte array. Each node is n bytes; they follow the secret-key value in the
+        /// (1 + a)·n block for tree i.
+        /// </summary>
         private byte[][] GetAuth(byte[] sigFors, int i)
         {
             byte[][] auth = new byte[_parameters.A][];

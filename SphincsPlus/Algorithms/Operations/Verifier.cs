@@ -30,6 +30,13 @@ namespace SphincsPlus.Algorithms.Operations
         /// <param name="sig">SLH-DSA signature: R ‖ SIG_FORS ‖ SIG_HT.</param>
         /// <param name="pk">Public key (PK.seed, PK.root).</param>
         /// <returns><c>true</c> if the signature is valid; <c>false</c> otherwise.</returns>
+        /// <summary>
+        /// Algorithm 20 — slh_verify_internal. Verifies signature <paramref name="sig"/> on
+        /// message <paramref name="m"/> against public key <paramref name="pk"/>. Rejects
+        /// immediately if the signature length is incorrect. Extracts R, SIG_FORS and SIG_HT,
+        /// derives (idxTree, idxLeaf, md) from H_msg, recovers pkFors via fors_pkFromSig, then
+        /// returns <see langword="true"/> iff ht_verify accepts pkFors against PK.root.
+        /// </summary>
         internal bool VerifyInternal(byte[] m, byte[] sig, PublicKey pk)
         {
             int correctSigLength = (1 + _parameters.K * (1 + _parameters.A) + _parameters.H + _parameters.D * _parameters.Len) * _parameters.N;
@@ -52,7 +59,14 @@ namespace SphincsPlus.Algorithms.Operations
 
             return verificationResult;
         }
+        /// <summary>
+        /// Extracts R (n bytes) from the beginning of the flat signature byte array σ = R ‖ SIG_FORS ‖ SIG_HT.
+        /// </summary>
         private byte[] GetR(byte[] sig) => sig[.._parameters.N];
+        /// <summary>
+        /// Extracts SIG_FORS of k·(1 + a)·n bytes from the flat signature byte array,
+        /// starting after the n-byte R value.
+        /// </summary>
         private byte[] GetSigFors(byte[] sig)
         {
             int start = _parameters.N;
@@ -60,6 +74,10 @@ namespace SphincsPlus.Algorithms.Operations
             return sig[start..end];
         }
 
+        /// <summary>
+        /// Extracts SIG_HT of d·(h' + len)·n bytes from the flat signature byte array,
+        /// starting after R ‖ SIG_FORS.
+        /// </summary>
         private byte[] GetSigHt(byte[] sig)
         {
             int start = (1 + _parameters.K * (1 + _parameters.A)) * _parameters.N;

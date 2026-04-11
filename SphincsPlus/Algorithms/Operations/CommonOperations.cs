@@ -18,6 +18,12 @@ namespace SphincsPlus.Algorithms.Operations
             _parameters = parameters;
         }
 
+        /// <summary>
+        /// Computes the message digest via H_msg(R, PK.seed, PK.root, M) and splits the output
+        /// into the FORS message digest md (⌈k·a/8⌉ bytes), tree index idxTree
+        /// (⌈(h − h/d)/8⌉ bytes mod 2^(h−h/d)), and leaf index idxLeaf (⌈h/d/8⌉ bytes mod 2^(h/d)).
+        /// Used by both slh_sign_internal and slh_verify_internal.
+        /// </summary>
         public (ulong idxTree, int idxLeaf, byte[] md) ExtractData(byte[] m, byte[] pkSeed, byte[] pkRoot, byte[] r)
         {
             byte[] digest = _hashing.HMsg(r, pkSeed, pkRoot, m);
@@ -39,6 +45,10 @@ namespace SphincsPlus.Algorithms.Operations
             return (idxTree, idxLeaf, md);
         }
 
+        /// <summary>
+        /// Constructs a FORS_TREE address with the given tree index and key-pair (leaf) address.
+        /// Used to derive the shared ADRS context passed to FORS signing and verification.
+        /// </summary>
         public Adrs CreateForsTreeAdress(ulong idxTree, int idxLeaf)
         {
             Adrs adrs = new(ByteConversions.ToByte(0, 32));

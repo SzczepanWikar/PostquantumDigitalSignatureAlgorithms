@@ -17,16 +17,10 @@ namespace SphincsPlus.Algorithms.Operations
         }
 
         /// <summary>
-        /// Algorithm 18 — slh_keygen_internal.
-        /// Computes PK.root as the root of the top-layer XMSS tree and assembles the key pair.
+        /// Algorithm 18 — slh_keygen_internal. Computes PK.root as the XMSS root of the
+        /// top-layer tree (layer d−1, node 0, height h') and assembles the key pair:
+        /// SK = (SK.seed, SK.prf, PK.seed, PK.root) and PK = (PK.seed, PK.root).
         /// </summary>
-        /// <param name="skSeed">Secret seed SK.seed (n bytes)</param>
-        /// <param name="skPrf">PRF key SK.prf (n bytes)</param>
-        /// <param name="pkSeed">Public seed PK.seed (n bytes)</param>
-        /// <returns>
-        /// SK = SK.seed ‖ SK.prf ‖ PK.seed ‖ PK.root (4n bytes),
-        /// PK = PK.seed ‖ PK.root (2n bytes)
-        /// </returns>
         internal (SecretKey sk, PublicKey pk) KeyGenInternal(byte[] skSeed, byte[] skPrf, byte[] pkSeed)
         {
             Adrs adrs = new(ByteConversions.ToByte(0, 32));

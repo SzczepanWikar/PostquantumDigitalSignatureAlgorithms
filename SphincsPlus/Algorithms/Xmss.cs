@@ -18,6 +18,12 @@ namespace SphincsPlus.Algorithms
             _wotsPlus = wotsPlus;
         }
 
+        /// <summary>
+        /// Algorithm 8 — xmss_node. Recursively computes the n-byte root of the XMSS Merkle
+        /// subtree of height <paramref name="z"/> rooted at node index <paramref name="i"/>.
+        /// At height 0 generates the WOTS+ public key via <see cref="WotsPlus.PkGen"/>;
+        /// at height z > 0 hashes the two child roots via H with a TREE address.
+        /// </summary>
         public byte[] Node(byte[] skSeed, int i, int z, byte[] pkSeed, Adrs adrs)
         {
             if (z == 0)
@@ -38,6 +44,12 @@ namespace SphincsPlus.Algorithms
             return _hashing.H(pkSeed, adrs, ByteArrayHelpers.ConcatBytes(lNode, rNode));
         }
 
+        /// <summary>
+        /// Algorithm 9 — xmss_sign. Produces an XMSS signature of (len + h')·n bytes on
+        /// message <paramref name="m"/> at leaf index <paramref name="idx"/>. Builds the h'
+        /// authentication-path nodes via <see cref="Node"/>, signs m with WOTS+ at the chosen
+        /// leaf, and returns SIG_XMSS = sig_wots ‖ AUTH.
+        /// </summary>
         public byte[] Sign(byte[] m, byte[] skSeed, int idx, byte[] pkSeed, Adrs adrs)
         {
             byte[][] auth = new byte[_parameters.HPrime][];
@@ -56,6 +68,13 @@ namespace SphincsPlus.Algorithms
             return sigXmss;
         }
 
+        /// <summary>
+        /// Algorithm 10 — xmss_pkFromSig. Recovers the XMSS root from signature
+        /// <paramref name="sigXmss"/> and message <paramref name="m"/> at leaf index
+        /// <paramref name="idx"/>. Recovers the WOTS+ public key via
+        /// <see cref="WotsPlus.PkFromSig"/>, then walks up h' authentication-path nodes via H,
+        /// choosing left or right sibling based on the parity of idx at each level.
+        /// </summary>
         public byte[] PkFromSig(int idx, byte[] sigXmss, byte[] m, byte[] pkSeed, Adrs adrs)
         {
             adrs.SetTypeAndClear(SphincsPlusConstants.WotsHash);
@@ -92,8 +111,16 @@ namespace SphincsPlus.Algorithms
             return node0;
         }
 
+        /// <summary>
+        /// Extracts the WOTS+ signature from the flat SIG_XMSS byte array.
+        /// The WOTS+ signature occupies the first len·n bytes.
+        /// </summary>
         private byte[] GetWotsSig(byte[] sigXmss) => sigXmss[..(_parameters.Len * _parameters.N)];
 
+        /// <summary>
+        /// Extracts the h' authentication-path nodes from the flat SIG_XMSS byte array.
+        /// Each node is n bytes and follows the len·n WOTS+ signature.
+        /// </summary>
         private byte[][] GetXmssAuth(byte[] sigXmss)
         {
             byte[][] auth = new byte[_parameters.HPrime][];
