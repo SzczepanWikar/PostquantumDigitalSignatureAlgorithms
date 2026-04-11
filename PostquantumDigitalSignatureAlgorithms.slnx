@@ -1,7 +1,6 @@
 <Solution>
   <Project Path="D:/programowanie/PostquantumDigitalSignatureAlgorithms/Core/Core.csproj" />
   <Project Path="D:/programowanie/PostquantumDigitalSignatureAlgorithms/CrystalsDilithium/CrystalsDilithium.csproj" Id="5d1a63f4-7fb4-42b8-b12a-7d4dd806efae" />
-  <Project Path="D:/programowanie/PostquantumDigitalSignatureAlgorithms/PostquantumDigitalSignatureAlgorithms/PostquantumDigitalSignatureAlgorithms.csproj" />
   <Project Path="DilithiumTests/DilithiumTests.csproj" Id="8b3763a5-964d-43cf-a0f0-01e5db0c5b95" />
   <Project Path="SphincsPlus/SphincsPlus.csproj" Id="94335534-c9d7-4b84-9705-baa19e785a3b" />
   <Project Path="SphincsPlusTests/SphincsPlusTests.csproj" Id="aff5c435-c507-42ce-9bdb-278c5281f3de" />
