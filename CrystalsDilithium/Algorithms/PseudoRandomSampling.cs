@@ -17,7 +17,7 @@ namespace CrystalsDilithium.Algorithms
         }
 
         /// <summary>
-        /// Algorithm 25 — SampleInBall. Deterministically samples a polynomial c ∈ R_q with
+        /// Algorithm 29 — SampleInBall. Deterministically samples a polynomial c ∈ R_q with
         /// exactly τ non-zero coefficients, each ±1, from the seed <paramref name="rho"/>.
         /// Uses SHAKE-256: the first 8 output bytes supply the sign bits, subsequent bytes
         /// provide candidate positions via rejection sampling (Fisher-Yates shuffle).
@@ -64,7 +64,7 @@ namespace CrystalsDilithium.Algorithms
         }
 
         /// <summary>
-        /// Algorithm 26 — RejNTTPoly. Samples a uniform polynomial â ∈ T_q in NTT domain
+        /// Algorithm 30 — RejNTTPoly. Samples a uniform polynomial â ∈ T_q in NTT domain
         /// from the seed <paramref name="rho"/> using SHAKE-128 and rejection sampling via
         /// <see cref="BitAlgorithms.CoeffFromThreeBytes"/>. Reads 3 bytes per candidate
         /// and rejects values ≥ q.
@@ -94,7 +94,7 @@ namespace CrystalsDilithium.Algorithms
         }
 
         /// <summary>
-        /// Algorithm 27 — RejBoundedPoly. Samples a polynomial with coefficients in S_η
+        /// Algorithm 31 — RejBoundedPoly. Samples a polynomial with coefficients in S_η
         /// from the seed <paramref name="rho"/> using SHAKE-256 and rejection sampling via
         /// <see cref="BitAlgorithms.CoeffFromHalfByte"/>. Each output byte yields two
         /// 4-bit candidates (low and high nibble); candidates outside S_η are rejected.

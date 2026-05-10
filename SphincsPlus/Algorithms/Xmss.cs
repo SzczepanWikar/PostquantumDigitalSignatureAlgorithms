@@ -19,7 +19,7 @@ namespace SphincsPlus.Algorithms
         }
 
         /// <summary>
-        /// Algorithm 8 — xmss_node. Recursively computes the n-byte root of the XMSS Merkle
+        /// Algorithm 9 — xmss_node. Recursively computes the n-byte root of the XMSS Merkle
         /// subtree of height <paramref name="z"/> rooted at node index <paramref name="i"/>.
         /// At height 0 generates the WOTS+ public key via <see cref="WotsPlus.PkGen"/>;
         /// at height z > 0 hashes the two child roots via H with a TREE address.
@@ -45,7 +45,7 @@ namespace SphincsPlus.Algorithms
         }
 
         /// <summary>
-        /// Algorithm 9 — xmss_sign. Produces an XMSS signature of (len + h')·n bytes on
+        /// Algorithm 10 — xmss_sign. Produces an XMSS signature of (len + h')·n bytes on
         /// message <paramref name="m"/> at leaf index <paramref name="idx"/>. Builds the h'
         /// authentication-path nodes via <see cref="Node"/>, signs m with WOTS+ at the chosen
         /// leaf, and returns SIG_XMSS = sig_wots ‖ AUTH.
@@ -69,7 +69,7 @@ namespace SphincsPlus.Algorithms
         }
 
         /// <summary>
-        /// Algorithm 10 — xmss_pkFromSig. Recovers the XMSS root from signature
+        /// Algorithm 11 — xmss_pkFromSig. Recovers the XMSS root from signature
         /// <paramref name="sigXmss"/> and message <paramref name="m"/> at leaf index
         /// <paramref name="idx"/>. Recovers the WOTS+ public key via
         /// <see cref="WotsPlus.PkFromSig"/>, then walks up h' authentication-path nodes via H,

@@ -10,7 +10,7 @@ namespace CrystalsDilithium.Algorithms
         public NttArithmetic(DilithiumParameters parameters) => _parameters = parameters;
 
         /// <summary>
-        /// Coefficient-wise addition of two NTT-domain polynomials:
+        /// Algorithm 44 — AddNTT. Coefficient-wise addition of two NTT-domain polynomials:
         /// ĉ[i] = (â[i] + b̂[i]) mod q for i = 0, …, 255.
         /// </summary>
         public int[] AddNtt(int[] aHat, int[] bHat)
@@ -58,7 +58,7 @@ namespace CrystalsDilithium.Algorithms
         }
 
         /// <summary>
-        /// Coefficient-wise multiplication of two NTT-domain polynomials (Algorithm 43 — MultiplyNTTs):
+        /// Coefficient-wise multiplication of two NTT-domain polynomials (Algorithm 45 — MultiplyNTT):
         /// ĉ[i] = (â[i] · b̂[i]) mod q for i = 0, …, 255.
         /// Corresponds to polynomial multiplication modulo (X^256 + 1) in the standard domain.
         /// </summary>
@@ -75,8 +75,8 @@ namespace CrystalsDilithium.Algorithms
         }
 
         /// <summary>
-        /// Coefficient-wise addition of two NTT-domain polynomial vectors of length
-        /// <paramref name="l"/>. Applies <see cref="AddNtt"/> to each pair of polynomials.
+        /// Algorithm 46 — AddVectorNTT. Coefficient-wise addition of two NTT-domain polynomial
+        /// vectors of length <paramref name="l"/>. Applies <see cref="AddNtt"/> to each pair of polynomials.
         /// </summary>
         public int[][] AddVectorNtt(int l, int[][] aHat, int[][] bHat)
         {
@@ -123,8 +123,9 @@ namespace CrystalsDilithium.Algorithms
         }
 
         /// <summary>
-        /// Multiplies each polynomial in the NTT-domain vector <paramref name="vHat"/> by the
-        /// scalar NTT-domain polynomial <paramref name="cHat"/> using <see cref="MultiplyNtt"/>.
+        /// Algorithm 47 — ScalarVectorNTT. Multiplies each polynomial in the NTT-domain vector
+        /// <paramref name="vHat"/> by the scalar NTT-domain polynomial <paramref name="cHat"/>
+        /// using <see cref="MultiplyNtt"/>.
         /// Computes ŵ[i] = ĉ ⊙ v̂[i] for i = 0, …, <paramref name="l"/>−1.
         /// </summary>
         public int[][] ScalarVectorNtt(int l, int[] cHat, int[][] vHat)
@@ -140,7 +141,7 @@ namespace CrystalsDilithium.Algorithms
         }
 
         /// <summary>
-        /// Algorithm 44 — MatVecMulNTT. Multiplies the k×l NTT-domain matrix <paramref name="mHat"/>
+        /// Algorithm 48 — MatrixVectorNTT. Multiplies the k×l NTT-domain matrix <paramref name="mHat"/>
         /// by the NTT-domain vector <paramref name="vHat"/> of length l:
         /// ŵ[i] = Σ_{j=0}^{l−1} m̂[i][j] ⊙ v̂[j] (mod q) for i = 0, …, k−1,
         /// where ⊙ denotes coefficient-wise multiplication.

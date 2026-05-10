@@ -21,7 +21,7 @@ namespace SphincsPlus.Algorithms
         }
 
         /// <summary>
-        /// Algorithm 4 — chain. Iterates the hash function F exactly <paramref name="s"/> times
+        /// Algorithm 5 — chain. Iterates the hash function F exactly <paramref name="s"/> times
         /// starting from index <paramref name="i"/>, producing the s-step chain value from input
         /// <paramref name="x"/>. Requires i + s ≤ w − 1.
         /// </summary>
@@ -44,7 +44,7 @@ namespace SphincsPlus.Algorithms
         }
 
         /// <summary>
-        /// Algorithm 5 — wots_pkGen. Generates the WOTS+ public key by computing len full chains
+        /// Algorithm 6 — wots_pkGen. Generates the WOTS+ public key by computing len full chains
         /// (0 to w−1) from secret values derived via PRF, then compressing the chain ends with T_len.
         /// </summary>
         public byte[] PkGen(byte[] skSeed, byte[] pkSeed, Adrs address)
@@ -69,7 +69,7 @@ namespace SphincsPlus.Algorithms
         }
 
         /// <summary>
-        /// Algorithm 6 — wots_sign. Produces a WOTS+ signature of len·n bytes on message
+        /// Algorithm 7 — wots_sign. Produces a WOTS+ signature of len·n bytes on message
         /// <paramref name="m"/>. Converts m to base-w via <see cref="CalcMessage"/> (including
         /// the checksum), then for each chain i advances the secret-key value msg[i] steps.
         /// </summary>
@@ -95,7 +95,7 @@ namespace SphincsPlus.Algorithms
         }
 
         /// <summary>
-        /// Algorithm 7 — wots_pkFromSig. Recovers the WOTS+ public key from signature
+        /// Algorithm 8 — wots_pkFromSig. Recovers the WOTS+ public key from signature
         /// <paramref name="sig"/> and message <paramref name="m"/>. For each chain i continues
         /// from the signature value for the remaining w−1−msg[i] steps, then compresses the
         /// chain ends with T_len.

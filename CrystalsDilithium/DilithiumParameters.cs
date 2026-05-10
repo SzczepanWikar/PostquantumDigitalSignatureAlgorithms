@@ -40,7 +40,7 @@
         public byte Omega { get; }
         public int Beta { get; }
 
-        public DilithiumParameters(
+        internal DilithiumParameters(
             byte d,
             int tau,
             int gamma1,

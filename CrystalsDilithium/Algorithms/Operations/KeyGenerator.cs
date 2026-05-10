@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.Text;
+﻿using System.Security.Cryptography;
 using Core.Helpers;
 using CrystalsDilithium.Dto;
 
 namespace CrystalsDilithium.Algorithms.Operations
 {
-    internal class KeyGenerator
+    internal sealed class KeyGenerator
     {
         private readonly DilithiumParameters _parameters;
         private readonly BitAlgorithms _bitAlgorithms;

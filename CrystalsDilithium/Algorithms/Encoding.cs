@@ -27,7 +27,7 @@ namespace CrystalsDilithium.Algorithms
         }
 
         /// <summary>
-        /// Algorithm 16 — pkEncode. Encodes the public key as ρ ‖ SimpleBitPack(t1[0]) ‖ … ‖ SimpleBitPack(t1[k−1]),
+        /// Algorithm 22 — pkEncode. Encodes the public key as ρ ‖ SimpleBitPack(t1[0]) ‖ … ‖ SimpleBitPack(t1[k−1]),
         /// where each t1[i] polynomial is packed using ⌈log₂(q/2^d)⌉ bits per coefficient.
         /// </summary>
         public byte[] PkEncode(byte[] rho, int[][] t1)
@@ -49,7 +49,7 @@ namespace CrystalsDilithium.Algorithms
         }
 
         /// <summary>
-        /// Algorithm 17 — pkDecode. Decodes a public key byte string into ρ and the polynomial
+        /// Algorithm 23 — pkDecode. Decodes a public key byte string into ρ and the polynomial
         /// vector t1. Inverse of <see cref="PkEncode"/>.
         /// </summary>
         public (byte[] rho, int[][] t1) PkDecode(byte[] pk)
@@ -74,7 +74,7 @@ namespace CrystalsDilithium.Algorithms
         }
 
         /// <summary>
-        /// Algorithm 18 — skEncode. Encodes the secret key as
+        /// Algorithm 24 — skEncode. Encodes the secret key as
         /// ρ ‖ K ‖ tr ‖ BitPack(s1[0], η, η) ‖ … ‖ BitPack(s2[k−1], η, η) ‖ BitPack(t0[0], 2^(d−1)−1, 2^(d−1)) ‖ …
         /// </summary>
         public byte[] SkEncode(DecodedSecretKeyDto dto)
@@ -109,7 +109,7 @@ namespace CrystalsDilithium.Algorithms
         }
 
         /// <summary>
-        /// Algorithm 19 — skDecode. Decodes a secret key byte string into (ρ, K, tr, s1, s2, t0).
+        /// Algorithm 25 — skDecode. Decodes a secret key byte string into (ρ, K, tr, s1, s2, t0).
         /// Inverse of <see cref="SkEncode"/>.
         /// </summary>
         public DecodedSecretKeyDto SkDecode(byte[] sk)
@@ -171,7 +171,7 @@ namespace CrystalsDilithium.Algorithms
         }
 
         /// <summary>
-        /// Algorithm 20 — sigEncode. Encodes a signature as
+        /// Algorithm 26 — sigEncode. Encodes a signature as
         /// c̃ ‖ BitPack(z[0], γ₁−1, γ₁) ‖ … ‖ BitPack(z[l−1], γ₁−1, γ₁) ‖ HintBitPack(h).
         /// </summary>
         public byte[] SigEncode(SignatureDto dto)
@@ -200,7 +200,7 @@ namespace CrystalsDilithium.Algorithms
         }
 
         /// <summary>
-        /// Algorithm 21 — sigDecode. Decodes a signature byte string into (c̃, z, h).
+        /// Algorithm 27 — sigDecode. Decodes a signature byte string into (c̃, z, h).
         /// Returns a <see cref="SignatureDto"/> with h = <see langword="null"/> when
         /// <see cref="BitAlgorithms.HintBitUnpack"/> detects a malformed hint encoding.
         /// Inverse of <see cref="SigEncode"/>.
@@ -245,7 +245,7 @@ namespace CrystalsDilithium.Algorithms
         }
 
         /// <summary>
-        /// Algorithm 22 — w1Encode. Encodes the polynomial vector w1 (with coefficients in
+        /// Algorithm 28 — w1Encode. Encodes the polynomial vector w1 (with coefficients in
         /// [0, (q−1)/(2γ₂) − 1]) into a byte string using SimpleBitPack per polynomial.
         /// Used during signing to produce the verifier's challenge input.
         /// </summary>

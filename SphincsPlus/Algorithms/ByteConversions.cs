@@ -5,12 +5,12 @@ namespace SphincsPlus.Algorithms
     internal static class ByteConversions
     {
         /// <summary>
-        /// Algorithm 1 — toInt. Converts the full byte string <paramref name="x"/> to a
+        /// Algorithm 2 — toInt. Converts the full byte string <paramref name="x"/> to a
         /// non-negative integer. Delegates to <see cref="ToInt(byte[], int)"/>.
         /// </summary>
         public static int ToInt(byte[] x) => ToInt(x, x.Length);
         /// <summary>
-        /// Algorithm 1 — toInt. Interprets the first <paramref name="n"/> bytes of
+        /// Algorithm 2 — toInt. Interprets the first <paramref name="n"/> bytes of
         /// <paramref name="x"/> as a big-endian unsigned integer:
         /// result = Σ_{i=0}^{n−1} x[i] · 256^(n−1−i).
         /// </summary>
@@ -29,12 +29,12 @@ namespace SphincsPlus.Algorithms
         }
         
         /// <summary>
-        /// Algorithm 1 — toInt (ulong variant). Converts the full byte string <paramref name="x"/>
+        /// Algorithm 2 — toInt (ulong variant). Converts the full byte string <paramref name="x"/>
         /// to a <see langword="ulong"/>. Delegates to <see cref="ToUint64(byte[], int)"/>.
         /// </summary>
         public static ulong ToUint64(byte[] x) => ToUint64(x, x.Length);
         /// <summary>
-        /// Algorithm 1 — toInt (ulong variant). Interprets the first <paramref name="n"/> bytes of
+        /// Algorithm 2 — toInt (ulong variant). Interprets the first <paramref name="n"/> bytes of
         /// <paramref name="x"/> as a big-endian unsigned integer returned as <see langword="ulong"/>.
         /// Used when the value exceeds <see cref="int"/> range (e.g. tree indices).
         /// </summary>
@@ -53,7 +53,7 @@ namespace SphincsPlus.Algorithms
         }
 
         /// <summary>
-        /// Algorithm 2 — toByte. Converts non-negative integer <paramref name="x"/> to a
+        /// Algorithm 3 — toByte. Converts non-negative integer <paramref name="x"/> to a
         /// big-endian byte string of length <paramref name="n"/>:
         /// s[n−1−i] = (x / 256^i) mod 256 for i = 0, …, n−1.
         /// </summary>
@@ -79,7 +79,7 @@ namespace SphincsPlus.Algorithms
         }
 
         /// <summary>
-        /// Algorithm 2 — toByte (ulong variant). Converts non-negative integer <paramref name="x"/>
+        /// Algorithm 3 — toByte (ulong variant). Converts non-negative integer <paramref name="x"/>
         /// to a big-endian byte string of length <paramref name="n"/>. Used when the value
         /// exceeds <see cref="long"/> range.
         /// </summary>
@@ -105,7 +105,7 @@ namespace SphincsPlus.Algorithms
         }
 
         /// <summary>
-        /// Algorithm 3 — base_2b. Converts byte string <paramref name="x"/> to an array of
+        /// Algorithm 4 — base_2b. Converts byte string <paramref name="x"/> to an array of
         /// <paramref name="outLen"/> integers, each representing a <paramref name="b"/>-bit
         /// chunk read in big-endian order: baseb[i] = ⌊X / 2^(b·(outLen−1−i))⌋ mod 2^b.
         /// Used to split WOTS+ chain indices from a hash output.
