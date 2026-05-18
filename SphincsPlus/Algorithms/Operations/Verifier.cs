@@ -1,5 +1,4 @@
 ﻿using SphincsPlus.ADRS;
-using SphincsPlus.Hashing;
 using SphincsPlus.Models;
 
 namespace SphincsPlus.Algorithms.Operations
@@ -10,8 +9,6 @@ namespace SphincsPlus.Algorithms.Operations
         private readonly Fors _fors;
         private readonly HyperTree _hyperTree;
         private readonly CommonOperations _commonOperations;
-
-        private ISphincsPlusHashing _hashing => _parameters.Hashing;
 
         public Verifier(SphincsPlusParameters parameters)
             : this(parameters, new Fors(parameters), new HyperTree(parameters), new CommonOperations(parameters)) { }
