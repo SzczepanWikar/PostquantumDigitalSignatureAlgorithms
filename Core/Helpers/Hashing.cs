@@ -5,12 +5,12 @@ namespace Core.Helpers
     public static class Hashing
     {
         public static byte[] Mgf1Sha256HashData(byte[] seed, int maskLen) =>
-            Mgf1ShaHashData(seed, maskLen, 32, SHA256.HashData);
+            Mgf1HashData(seed, maskLen, 32, SHA256.HashData);
 
         public static byte[] Mgf1Sha512HashData(byte[] seed, int maskLen) =>
-            Mgf1ShaHashData(seed, maskLen, 64, SHA512.HashData);
+            Mgf1HashData(seed, maskLen, 64, SHA512.HashData);
 
-        private static byte[] Mgf1ShaHashData(
+        private static byte[] Mgf1HashData(
             byte[] seed,
             int maskLen,
             int hLen,
