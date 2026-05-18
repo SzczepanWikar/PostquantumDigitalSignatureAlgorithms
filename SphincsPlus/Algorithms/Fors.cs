@@ -1,4 +1,5 @@
 ﻿using Core.Helpers;
+using SphincsPlus.ADRS;
 using SphincsPlus.Hashing;
 
 namespace SphincsPlus.Algorithms
@@ -21,7 +22,7 @@ namespace SphincsPlus.Algorithms
         public byte[] SkGen(byte[] skSeed, byte[] pkSeed, Adrs adrs, int idx)
         {
             Adrs skAdrs = new Adrs(adrs);
-            skAdrs.SetTypeAndClear(SphincsPlusConstants.ForsPrf);
+            skAdrs.SetTypeAndClear(AdrsTypes.ForsPrf);
             skAdrs.SetKeyPairAddress(adrs.GetKeyPairAddress());
             skAdrs.SetTreeIndex(idx);
 
@@ -131,7 +132,7 @@ namespace SphincsPlus.Algorithms
             }
 
             Adrs forsPkAdrs = new Adrs(adrs);
-            forsPkAdrs.SetTypeAndClear(SphincsPlusConstants.ForsRoots);
+            forsPkAdrs.SetTypeAndClear(AdrsTypes.ForsRoots);
             forsPkAdrs.SetKeyPairAddress(adrs.GetKeyPairAddress());
             byte[] pk = _hashing.T(pkSeed, forsPkAdrs, root);
 

@@ -1,3 +1,5 @@
+using SphincsPlus.ADRS;
+
 namespace SphincsPlus.Hashing
 {
     internal interface ISphincsPlusHashing

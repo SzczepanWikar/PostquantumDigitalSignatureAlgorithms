@@ -1,4 +1,5 @@
 using Core.Helpers;
+using SphincsPlus.ADRS;
 using SphincsPlus.Hashing;
 
 namespace SphincsPlus.Algorithms
@@ -28,7 +29,7 @@ namespace SphincsPlus.Algorithms
         {
             if (z == 0)
             {
-                adrs.SetTypeAndClear(SphincsPlusConstants.WotsHash);
+                adrs.SetTypeAndClear(AdrsTypes.WotsHash);
                 adrs.SetKeyPairAddress(i);
 
                 return _wotsPlus.PkGen(skSeed, pkSeed, adrs);
@@ -37,7 +38,7 @@ namespace SphincsPlus.Algorithms
             byte[] lNode = Node(skSeed, 2 * i, z - 1, pkSeed, adrs);
             byte[] rNode = Node(skSeed, 2 * i + 1, z - 1, pkSeed, adrs);
 
-            adrs.SetTypeAndClear(SphincsPlusConstants.Tree);
+            adrs.SetTypeAndClear(AdrsTypes.Tree);
             adrs.SetTreeHeight(z);
             adrs.SetTreeIndex(i);
 
@@ -59,7 +60,7 @@ namespace SphincsPlus.Algorithms
                 auth[j] = Node(skSeed, k, j, pkSeed, adrs);
             }
 
-            adrs.SetTypeAndClear(SphincsPlusConstants.WotsHash);
+            adrs.SetTypeAndClear(AdrsTypes.WotsHash);
             adrs.SetKeyPairAddress(idx);
 
             byte[] sig = _wotsPlus.Sign(m, skSeed, pkSeed, adrs);
@@ -77,7 +78,7 @@ namespace SphincsPlus.Algorithms
         /// </summary>
         public byte[] PkFromSig(int idx, byte[] sigXmss, byte[] m, byte[] pkSeed, Adrs adrs)
         {
-            adrs.SetTypeAndClear(SphincsPlusConstants.WotsHash);
+            adrs.SetTypeAndClear(AdrsTypes.WotsHash);
             adrs.SetKeyPairAddress(idx);
 
             byte[] sig = GetWotsSig(sigXmss);
@@ -85,7 +86,7 @@ namespace SphincsPlus.Algorithms
 
             byte[] node0 = _wotsPlus.PkFromSig(sig, m, pkSeed, adrs);
 
-            adrs.SetTypeAndClear(SphincsPlusConstants.Tree);
+            adrs.SetTypeAndClear(AdrsTypes.Tree);
             adrs.SetTreeIndex(idx);
 
             for (int k = 0; k < _parameters.HPrime; k++)

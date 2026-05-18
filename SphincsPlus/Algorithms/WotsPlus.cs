@@ -1,4 +1,5 @@
 ﻿using Core.Helpers;
+using SphincsPlus.ADRS;
 using SphincsPlus.Hashing;
 using System.Diagnostics;
 
@@ -49,7 +50,7 @@ namespace SphincsPlus.Algorithms
         /// </summary>
         public byte[] PkGen(byte[] skSeed, byte[] pkSeed, Adrs address)
         {
-            Adrs skAdrs = InitAdrs(address, SphincsPlusConstants.WotsPrf);
+            Adrs skAdrs = InitAdrs(address, AdrsTypes.WotsPrf);
 
             byte[][] tmp = new byte[_parameters.Len][];
 
@@ -61,7 +62,7 @@ namespace SphincsPlus.Algorithms
                 tmp[i] = Chain(sk, 0, _parameters.W - 1, pkSeed, address);
             }
 
-            Adrs wotsPkAdrs = InitAdrs(address, SphincsPlusConstants.WotsPk);
+            Adrs wotsPkAdrs = InitAdrs(address, AdrsTypes.WotsPk);
 
             byte[] pk = _hashing.T(pkSeed, wotsPkAdrs, ByteArrayHelpers.ConcatBytes(tmp));
 
@@ -77,7 +78,7 @@ namespace SphincsPlus.Algorithms
         {
             int[] msg = CalcMessage(m);
 
-            Adrs skAdrs = InitAdrs(address, SphincsPlusConstants.WotsPrf);
+            Adrs skAdrs = InitAdrs(address, AdrsTypes.WotsPrf);
 
             byte[][] sig = new byte[_parameters.Len][];
 
@@ -113,7 +114,7 @@ namespace SphincsPlus.Algorithms
                 tmp[i] = Chain(sigI, msg[i], _parameters.W - 1 - msg[i], pkSeed, address);
             }
 
-            Adrs wotsPkAdrs = InitAdrs(address, SphincsPlusConstants.WotsPk);
+            Adrs wotsPkAdrs = InitAdrs(address, AdrsTypes.WotsPk);
             byte[] pk = _hashing.T(pkSeed, wotsPkAdrs, ByteArrayHelpers.ConcatBytes(tmp));
 
             return pk;
@@ -124,7 +125,7 @@ namespace SphincsPlus.Algorithms
         /// and restores the key-pair address. Used to derive WOTS_PRF and WOTS_PK addresses
         /// from the current WOTS_HASH address without mutating the original.
         /// </summary>
-        private static Adrs InitAdrs(Adrs adrs, SphincsPlusConstants constant)
+        private static Adrs InitAdrs(Adrs adrs, AdrsTypes constant)
         {
             Adrs result = new Adrs(adrs);
             result.SetTypeAndClear(constant);

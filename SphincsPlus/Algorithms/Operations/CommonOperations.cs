@@ -1,6 +1,6 @@
 ﻿using Core.Helpers;
+using SphincsPlus.ADRS;
 using SphincsPlus.Hashing;
-using SphincsPlus.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -54,7 +54,7 @@ namespace SphincsPlus.Algorithms.Operations
             Adrs adrs = new(ByteConversions.ToByte(0, 32));
 
             adrs.SetTreeAddress(idxTree);
-            adrs.SetTypeAndClear(SphincsPlusConstants.ForsTree);
+            adrs.SetTypeAndClear(AdrsTypes.ForsTree);
             adrs.SetKeyPairAddress(idxLeaf);
 
             return adrs;

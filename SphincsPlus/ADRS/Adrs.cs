@@ -1,7 +1,7 @@
 ﻿using Core.Helpers;
 using SphincsPlus.Algorithms;
 
-namespace SphincsPlus
+namespace SphincsPlus.ADRS
 {
     /// <summary>
     /// ADRS — 32-byte address structure that domain-separates every tweakable hash call in
@@ -64,7 +64,7 @@ namespace SphincsPlus
         /// 12 type-specific bytes [20..31]. Must be called before setting any type-specific
         /// fields to avoid stale data from a previous address type. (FIPS 205 §4.2)
         /// </summary>
-        public void SetTypeAndClear(SphincsPlusConstants y) => SetTypeAndClear((int)y);
+        public void SetTypeAndClear(AdrsTypes y) => SetTypeAndClear((int)y);
 
         /// <summary>
         /// Sets the 4-byte type field (bytes [16..19]) to <paramref name="y"/> and zeroes the

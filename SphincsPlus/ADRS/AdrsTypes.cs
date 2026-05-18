@@ -1,6 +1,6 @@
-namespace SphincsPlus
+namespace SphincsPlus.ADRS
 {
-    internal enum SphincsPlusConstants
+    internal enum AdrsTypes
     {
         WotsHash = 0,
         WotsPk = 1,
