@@ -22,7 +22,7 @@ namespace SphincsPlus.ADRS
         {
             if(content.Length != 32)
             {
-                throw new ArgumentException("_content length must be 32.");
+                throw new ArgumentException("content length must be 32.");
             }
 
             _content = content.ToArray();
