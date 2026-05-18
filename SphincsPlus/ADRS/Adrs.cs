@@ -14,6 +14,7 @@ namespace SphincsPlus.ADRS
         private byte[] _content = new byte[32];
 
         public IReadOnlyCollection<byte> Content { get => _content; }
+
         public Adrs()
         {}
 
