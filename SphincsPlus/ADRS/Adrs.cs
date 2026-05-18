@@ -11,8 +11,9 @@ namespace SphincsPlus.ADRS
     /// </summary>
     internal sealed class Adrs
     {
-        public byte[] Content { get; private set; } = new byte[32];
+        private byte[] _content = new byte[32];
 
+        public IReadOnlyCollection<byte> Content { get => _content; }
         public Adrs()
         {}
 
@@ -20,15 +21,15 @@ namespace SphincsPlus.ADRS
         {
             if(content.Length != 32)
             {
-                throw new ArgumentException("Content length must be 32.");
+                throw new ArgumentException("_content length must be 32.");
             }
 
-            Content = content.ToArray();
+            _content = content.ToArray();
         }
 
         public Adrs(Adrs adrs)
         {
-            Content = adrs.Content.ToArray();
+            _content = adrs.Content.ToArray();
         }
 
         /// <summary>
@@ -40,9 +41,9 @@ namespace SphincsPlus.ADRS
         {
             byte[] layer = ByteConversions.ToByte(l, 4);
 
-            byte[] postfix = Content.Skip(4).ToArray();
+            byte[] postfix = _content.Skip(4).ToArray();
 
-            Content = ByteArrayHelpers.ConcatBytes(layer, postfix);
+            _content = ByteArrayHelpers.ConcatBytes(layer, postfix);
         }
 
         /// <summary>
@@ -52,11 +53,11 @@ namespace SphincsPlus.ADRS
         /// </summary>
         public void SetTreeAddress(ulong t)
         {
-            byte[] layer = Content.Take(4).ToArray();
+            byte[] layer = _content.Take(4).ToArray();
             byte[] tree = ByteConversions.ToByte(t, 12);
-            byte[] postfix = Content.Skip(16).ToArray();
+            byte[] postfix = _content.Skip(16).ToArray();
 
-            Content = ByteArrayHelpers.ConcatBytes(layer, tree, postfix);
+            _content = ByteArrayHelpers.ConcatBytes(layer, tree, postfix);
         }
 
         /// <summary>
@@ -73,11 +74,11 @@ namespace SphincsPlus.ADRS
         /// </summary>
         public void SetTypeAndClear(int y)
         {
-            byte[] prefix = Content.Take(16).ToArray();
+            byte[] prefix = _content.Take(16).ToArray();
             byte[] type = ByteConversions.ToByte(y, 4);
             byte[] postfix = new byte[12];
 
-            Content = ByteArrayHelpers.ConcatBytes(prefix, type, postfix);
+            _content = ByteArrayHelpers.ConcatBytes(prefix, type, postfix);
         }
 
         /// <summary>
@@ -88,11 +89,11 @@ namespace SphincsPlus.ADRS
         /// </summary>
         public void SetKeyPairAddress(int i)
         {
-            byte[] prefix = Content.Take(20).ToArray();
+            byte[] prefix = _content.Take(20).ToArray();
             byte[] keyPair = ByteConversions.ToByte(i, 4);
-            byte[] postfix = Content.Skip(24).ToArray();
+            byte[] postfix = _content.Skip(24).ToArray();
 
-            Content = ByteArrayHelpers.ConcatBytes(prefix, keyPair, postfix);
+            _content = ByteArrayHelpers.ConcatBytes(prefix, keyPair, postfix);
         }
 
         /// <summary>
@@ -102,11 +103,11 @@ namespace SphincsPlus.ADRS
         /// </summary>
         public void SetChainAddress(int i)
         {
-            byte[] prefix = Content.Take(24).ToArray();
+            byte[] prefix = _content.Take(24).ToArray();
             byte[] chain = ByteConversions.ToByte(i, 4);
-            byte[] postfix = Content.Skip(28).ToArray();
+            byte[] postfix = _content.Skip(28).ToArray();
 
-            Content = ByteArrayHelpers.ConcatBytes(prefix, chain, postfix);
+            _content = ByteArrayHelpers.ConcatBytes(prefix, chain, postfix);
         }
 
         /// <summary>
@@ -124,10 +125,10 @@ namespace SphincsPlus.ADRS
         /// </summary>
         public void SetHashAddress(int i)
         {
-            byte[] prefix = Content.Take(28).ToArray();
+            byte[] prefix = _content.Take(28).ToArray();
             byte[] hash = ByteConversions.ToByte(i, 4);
 
-            Content = ByteArrayHelpers.ConcatBytes(prefix, hash);
+            _content = ByteArrayHelpers.ConcatBytes(prefix, hash);
         }
 
         /// <summary>
@@ -141,12 +142,12 @@ namespace SphincsPlus.ADRS
         /// <summary>
         /// Returns the 4-byte key-pair address encoded in bytes [20..23]. (FIPS 205 §4.2)
         /// </summary>
-        public int GetKeyPairAddress() => ByteConversions.ToInt(Content[20..24]);
+        public int GetKeyPairAddress() => ByteConversions.ToInt(_content[20..24]);
 
         /// <summary>
         /// Returns the 4-byte tree-index encoded in bytes [28..31]. (FIPS 205 §4.2)
         /// </summary>
-        public int GetTreeIndex() => ByteConversions.ToInt(Content[28..32]);
+        public int GetTreeIndex() => ByteConversions.ToInt(_content[28..32]);
 
         /// <summary>
         /// Returns the 22-byte compressed address used by SHA2-based instantiations. Extracts:
@@ -155,6 +156,6 @@ namespace SphincsPlus.ADRS
         /// [20..32]. (FIPS 205 §4.2)
         /// </summary>
         public byte[] Compress() =>
-            ByteArrayHelpers.ConcatBytes(Content[3..4], Content[8..16], Content[19..20], Content[20..32]);
+            ByteArrayHelpers.ConcatBytes(_content[3..4], _content[8..16], _content[19..20], _content[20..32]);
     }
 }
