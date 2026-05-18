@@ -34,9 +34,9 @@ namespace SphincsPlus.ADRS
         }
 
         /// <summary>
-        /// Sets the 4-byte layer address field (bytes [0..3]) to <paramref name="l"/>.
-        /// Identifies the XMSS tree layer within the hypertree (0 = bottom, d−1 = top).
-        /// (FIPS 205 §4.2)
+        /// §4.3 — setLayerAddress (no algorithm number). Sets the 4-byte layer address field
+        /// (bytes [0..3]) to <paramref name="l"/>. Identifies the XMSS tree layer within the
+        /// hypertree (0 = bottom, d−1 = top).
         /// </summary>
         public void SetLayerAddress(int l)
         {
@@ -48,9 +48,9 @@ namespace SphincsPlus.ADRS
         }
 
         /// <summary>
-        /// Sets the 12-byte tree address field (bytes [4..15]) to <paramref name="t"/>.
-        /// Identifies the specific XMSS tree within the given layer of the hypertree.
-        /// (FIPS 205 §4.2)
+        /// §4.3 — setTreeAddress (no algorithm number). Sets the 12-byte tree address field
+        /// (bytes [4..15]) to <paramref name="t"/>. Identifies the specific XMSS tree within
+        /// the given layer of the hypertree.
         /// </summary>
         public void SetTreeAddress(ulong t)
         {
@@ -62,16 +62,18 @@ namespace SphincsPlus.ADRS
         }
 
         /// <summary>
-        /// Sets the 4-byte type field (bytes [16..19]) to <paramref name="y"/> and zeroes the
-        /// 12 type-specific bytes [20..31]. Must be called before setting any type-specific
-        /// fields to avoid stale data from a previous address type. (FIPS 205 §4.2)
+        /// §4.3 — setTypeAndClear (no algorithm number). Sets the 4-byte type field
+        /// (bytes [16..19]) to <paramref name="y"/> and zeroes the 12 type-specific bytes
+        /// [20..31]. Must be called before setting any type-specific fields to avoid stale data
+        /// from a previous address type.
         /// </summary>
         public void SetTypeAndClear(AdrsTypes y) => SetTypeAndClear((int)y);
 
         /// <summary>
-        /// Sets the 4-byte type field (bytes [16..19]) to <paramref name="y"/> and zeroes the
-        /// 12 type-specific bytes [20..31]. Must be called before setting any type-specific
-        /// fields to avoid stale data from a previous address type. (FIPS 205 §4.2)
+        /// §4.3 — setTypeAndClear (no algorithm number). Sets the 4-byte type field
+        /// (bytes [16..19]) to <paramref name="y"/> and zeroes the 12 type-specific bytes
+        /// [20..31]. Must be called before setting any type-specific fields to avoid stale data
+        /// from a previous address type.
         /// </summary>
         public void SetTypeAndClear(int y)
         {
@@ -83,10 +85,10 @@ namespace SphincsPlus.ADRS
         }
 
         /// <summary>
-        /// Sets the 4-byte key-pair address field (bytes [20..23]) to <paramref name="i"/>.
-        /// Selects the WOTS+ key pair within an XMSS tree or the FORS instance within the
-        /// virtual structure. Used by WOTS_HASH, WOTS_PRF, WOTS_PK, FORS_TREE, FORS_ROOTS,
-        /// and FORS_PRF address types. (FIPS 205 §4.2)
+        /// §4.3 — setKeyPairAddress (no algorithm number). Sets the 4-byte key-pair address
+        /// field (bytes [20..23]) to <paramref name="i"/>. Selects the WOTS+ key pair within
+        /// an XMSS tree or the FORS instance within the virtual structure. Used by WOTS_HASH,
+        /// WOTS_PRF, WOTS_PK, FORS_TREE, FORS_ROOTS, and FORS_PRF address types.
         /// </summary>
         public void SetKeyPairAddress(int i)
         {
@@ -98,9 +100,9 @@ namespace SphincsPlus.ADRS
         }
 
         /// <summary>
-        /// Sets the 4-byte chain address field (bytes [24..27]) to <paramref name="i"/>.
-        /// Identifies the chain index within a WOTS+ key pair (0 to len−1). Used by WOTS_HASH
-        /// and WOTS_PRF address types. (FIPS 205 §4.2)
+        /// §4.3 — setChainAddress (no algorithm number). Sets the 4-byte chain address field
+        /// (bytes [24..27]) to <paramref name="i"/>. Identifies the chain index within a WOTS+
+        /// key pair (0 to len−1). Used by WOTS_HASH and WOTS_PRF address types.
         /// </summary>
         public void SetChainAddress(int i)
         {
@@ -112,17 +114,17 @@ namespace SphincsPlus.ADRS
         }
 
         /// <summary>
-        /// Sets the 4-byte tree-height field (bytes [24..27]) to <paramref name="i"/>.
-        /// Identifies the level within a FORS or XMSS Merkle tree (0 = leaf level). Shares the
-        /// same byte range as the chain address; used by FORS_TREE and TREE address types.
-        /// (FIPS 205 §4.2)
+        /// §4.3 — setTreeHeight (no algorithm number). Sets the 4-byte tree-height field
+        /// (bytes [24..27]) to <paramref name="i"/>. Identifies the level within a FORS or XMSS
+        /// Merkle tree (0 = leaf level). Shares the same byte range as the chain address; used
+        /// by FORS_TREE and TREE address types.
         /// </summary>
         public void SetTreeHeight(int i) => SetChainAddress(i);
 
         /// <summary>
-        /// Sets the 4-byte hash address field (bytes [28..31]) to <paramref name="i"/>.
-        /// Identifies the step index within a WOTS+ chain (0 to w−1). Used by WOTS_HASH and
-        /// WOTS_PRF address types. (FIPS 205 §4.2)
+        /// §4.3 — setHashAddress (no algorithm number). Sets the 4-byte hash address field
+        /// (bytes [28..31]) to <paramref name="i"/>. Identifies the step index within a WOTS+
+        /// chain (0 to w−1). Used by WOTS_HASH and WOTS_PRF address types.
         /// </summary>
         public void SetHashAddress(int i)
         {
@@ -133,28 +135,30 @@ namespace SphincsPlus.ADRS
         }
 
         /// <summary>
-        /// Sets the 4-byte tree-index field (bytes [28..31]) to <paramref name="i"/>.
-        /// Identifies the node position within a level of a FORS or XMSS Merkle tree. Shares
-        /// the same byte range as the hash address; used by FORS_TREE and TREE address types.
-        /// (FIPS 205 §4.2)
+        /// §4.3 — setTreeIndex (no algorithm number). Sets the 4-byte tree-index field
+        /// (bytes [28..31]) to <paramref name="i"/>. Identifies the node position within a
+        /// level of a FORS or XMSS Merkle tree. Shares the same byte range as the hash address;
+        /// used by FORS_TREE and TREE address types.
         /// </summary>
         public void SetTreeIndex(int i) => SetHashAddress(i);
 
         /// <summary>
-        /// Returns the 4-byte key-pair address encoded in bytes [20..23]. (FIPS 205 §4.2)
+        /// §4.3 — getKeyPairAddress (no algorithm number). Returns the 4-byte key-pair address
+        /// encoded in bytes [20..23].
         /// </summary>
         public int GetKeyPairAddress() => ByteConversions.ToInt(_content[20..24]);
 
         /// <summary>
-        /// Returns the 4-byte tree-index encoded in bytes [28..31]. (FIPS 205 §4.2)
+        /// §4.3 — getTreeIndex (no algorithm number). Returns the 4-byte tree-index encoded in
+        /// bytes [28..31].
         /// </summary>
         public int GetTreeIndex() => ByteConversions.ToInt(_content[28..32]);
 
         /// <summary>
-        /// Returns the 22-byte compressed address used by SHA2-based instantiations. Extracts:
-        /// the last byte of the layer address [3..4], the last 8 bytes of the tree address
-        /// [8..16], the last byte of the type field [19..20], and all 12 type-specific bytes
-        /// [20..32]. (FIPS 205 §4.2)
+        /// §4.3 — compress (no algorithm number). Returns the 22-byte compressed address
+        /// (ADRS^c) used by SHA2-based instantiations. Extracts: the last byte of the layer
+        /// address [3..4], the last 8 bytes of the tree address [8..16], the last byte of the
+        /// type field [19..20], and all 12 type-specific bytes [20..32].
         /// </summary>
         public byte[] Compress() =>
             ByteArrayHelpers.ConcatBytes(_content[3..4], _content[8..16], _content[19..20], _content[20..32]);
