@@ -1,4 +1,4 @@
-# Master's Thesis Project
+# Master's Thesis Project - ML-DSA (FIPS 204) and SLH-DSA (FIPS 205) Implementation
 
 ## Topic
 _Comparison and implementation of selected post-quantum digital signature algorithms._
