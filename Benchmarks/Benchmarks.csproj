@@ -9,10 +9,12 @@
 
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.15.8" />
+    <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\CrystalsDilithium\CrystalsDilithium.csproj" />
+    <ProjectReference Include="..\SphincsPlus\SphincsPlus.csproj" />
   </ItemGroup>
 
 </Project>
