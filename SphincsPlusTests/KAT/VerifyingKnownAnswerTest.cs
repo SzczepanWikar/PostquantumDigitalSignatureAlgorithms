@@ -9,7 +9,7 @@ using SphincsPlusTests.KAT.Models.Veryfing;
 
 namespace SphincsPlusTests.KAT
 {
-    public class VerifyingKnownAnswearTest
+    public class VerifyingKnownAnswerTest
     {
         private static readonly string DataPath = Path.Combine(
             AppDomain.CurrentDomain.BaseDirectory,

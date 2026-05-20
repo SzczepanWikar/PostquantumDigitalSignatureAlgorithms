@@ -9,7 +9,7 @@ using DilithiumTests.KAT.Models.Verifying;
 
 namespace DilithiumTests.KAT
 {
-    public class VerifyingKnownAnswearTest
+    public class VerifyingKnownAnswerTest
     {
         private static readonly string DataPath = Path.Combine(
             AppDomain.CurrentDomain.BaseDirectory,

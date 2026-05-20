@@ -1,15 +1,16 @@
-using System.Collections;
 using System.Security.Cryptography;
 using System.Text.Json;
 using Core.Helpers;
-using CrystalsDilithium;
-using CrystalsDilithium.Algorithms;
-using CrystalsDilithium.Algorithms.Operations;
-using DilithiumTests.KAT.Models.Signing;
+using SphincsPlus;
+using SphincsPlus.Algorithms;
+using SphincsPlus.Algorithms.Operations;
+using SphincsPlus.Models;
+using SphincsPlusTests.KAT.Models.Signing;
 
-namespace DilithiumTests.KAT
+
+namespace SphincsPlusTests.KAT
 {
-    public class SigningKnownAnswearTest
+    public class SigningKnownAnswerTest
     {
         private static readonly string DataPath = Path.Combine(
             AppDomain.CurrentDomain.BaseDirectory,
@@ -26,24 +27,28 @@ namespace DilithiumTests.KAT
 
             foreach (TestGroup group in data.TestGroups)
             {
-                DilithiumParameters parameters = group.ParameterSet switch
+                SphincsPlusParameters parameters = group.ParameterSet switch
                 {
-                    "ML-DSA-44" => DilithiumParametersProvider.SecurityLevel2Parameters,
-                    "ML-DSA-65" => DilithiumParametersProvider.SecurityLevel3Parameters,
-                    "ML-DSA-87" => DilithiumParametersProvider.SecurityLevel5Parameters,
+                    "SLH-DSA-SHA2-128s" => SphincsPlusParametersProvider.Sha2_128s,
+                    "SLH-DSA-SHA2-128f" => SphincsPlusParametersProvider.Sha2_128f,
+                    "SLH-DSA-SHAKE-128s" => SphincsPlusParametersProvider.Shake_128s,
+                    "SLH-DSA-SHAKE-128f" => SphincsPlusParametersProvider.Shake_128f,
+                    "SLH-DSA-SHA2-192s" => SphincsPlusParametersProvider.Sha2_192s,
+                    "SLH-DSA-SHA2-192f" => SphincsPlusParametersProvider.Sha2_192f,
+                    "SLH-DSA-SHAKE-192s" => SphincsPlusParametersProvider.Shake_192s,
+                    "SLH-DSA-SHAKE-192f" => SphincsPlusParametersProvider.Shake_192f,
+                    "SLH-DSA-SHA2-256s" => SphincsPlusParametersProvider.Sha2_256s,
+                    "SLH-DSA-SHA2-256f" => SphincsPlusParametersProvider.Sha2_256f,
+                    "SLH-DSA-SHAKE-256s" => SphincsPlusParametersProvider.Shake_256s,
+                    "SLH-DSA-SHAKE-256f" => SphincsPlusParametersProvider.Shake_256f,
                     _ => throw new InvalidOperationException(
                         $"Unknown parameter set: {group.ParameterSet}"
                     ),
                 };
 
-                if (group.ExternalMu)
-                {
-                    continue;
-                }
-
                 foreach (Test test in group.Tests)
                 {
-                    if (test.Deferred)
+                    if (test.Deferred == true)
                     {
                         continue;
                     }
@@ -53,26 +58,20 @@ namespace DilithiumTests.KAT
                         continue;
                     }
 
-                    byte[] ctx = string.IsNullOrWhiteSpace(test.Context)
-                        ? []
-                        : Convert.FromHexString(test.Context);
-
-                    byte[] rnd = string.IsNullOrEmpty(test.Rnd)
-                        ? new byte[32]
-                        : Convert.FromHexString(test.Rnd);
-
                     yield return
                     [
                         test.TcId,
                         Convert.FromHexString(test.Sk),
-                        rnd,
-                        ctx,
                         Convert.FromHexString(test.Message),
+                        string.IsNullOrEmpty(test.Context) ? [] : Convert.FromHexString(test.Context),
                         group.PreHash,
                         test.HashAlg ?? "none",
                         group.SignatureInterface,
                         Convert.FromHexString(test.Signature),
                         parameters,
+                        string.IsNullOrEmpty(test.AdditionalRandomness)
+                            ? (byte[]?)null
+                            : Convert.FromHexString(test.AdditionalRandomness),
                     ];
                 }
             }
@@ -81,25 +80,24 @@ namespace DilithiumTests.KAT
         [Theory]
         [MemberData(nameof(SigningTestData))]
         public void Signing_ShouldGenerateExpectedSignature(
-            int tcId,
+            int? tcId,
             byte[] sk,
-            byte[] rnd,
-            byte[] ctx,
             byte[] message,
+            byte[] ctx,
             string preHash,
             string hashAlg,
             string signatureInterface,
             byte[] expectedSignature,
-            DilithiumParameters parameters
+            SphincsPlusParameters parameters,
+            byte[]? additionalRandomness
         )
         {
             Signer signer = new(parameters);
-            BitAlgorithms bitAlgorithms = new(parameters);
+            SecretKey secretKey = SecretKey.FromBytesArray(sk);
 
-            byte[] mPrimeBytes = BuildMessage(message, ctx, preHash, hashAlg, signatureInterface);
-            BitArray mPrim = bitAlgorithms.BytesToBits(mPrimeBytes);
+            byte[] mPrime = BuildMessage(message, ctx, preHash, hashAlg, signatureInterface);
 
-            byte[] sigma = signer.SignInternal(sk, mPrim, rnd);
+            byte[] sigma = signer.SignInternal(mPrime, secretKey, addrnd: additionalRandomness);
 
             Assert.Equal(expectedSignature, sigma);
         }
@@ -120,8 +118,8 @@ namespace DilithiumTests.KAT
             if (preHash == "pure")
             {
                 return ByteArrayHelpers.ConcatBytes(
-                    [0x00],
-                    [(byte)ctx.Length],
+                    ByteConversions.ToByte(0, 1),
+                    ByteConversions.ToByte(ctx.Length, 1),
                     ctx,
                     message
                 );
@@ -130,8 +128,8 @@ namespace DilithiumTests.KAT
             (byte[] oid, byte[] hashedMessage) = PreHashMessage(message, hashAlg);
 
             return ByteArrayHelpers.ConcatBytes(
-                [0x01],
-                [(byte)ctx.Length],
+                ByteConversions.ToByte(1, 1),
+                ByteConversions.ToByte(ctx.Length, 1),
                 ctx,
                 oid,
                 hashedMessage

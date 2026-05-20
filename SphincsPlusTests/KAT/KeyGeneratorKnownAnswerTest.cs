@@ -5,7 +5,7 @@ using SphincsPlusTests.KAT.Models.KeyGeneration;
 
 namespace SphincsPlusTests.KAT
 {
-    public class KeyGeneratorKnownAnswearTest
+    public class KeyGeneratorKnownAnswerTest
     {
         private static readonly string DataPath = Path.Combine(
             AppDomain.CurrentDomain.BaseDirectory,

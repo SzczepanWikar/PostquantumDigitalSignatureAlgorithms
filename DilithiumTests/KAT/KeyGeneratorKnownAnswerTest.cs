@@ -4,7 +4,7 @@ using DilithiumTests.KAT.Models.KeyGeneration;
 
 namespace DilithiumTests.KAT
 {
-    public class KeyGeneratorKnownAnswearTest
+    public class KeyGeneratorKnownAnswerTest
     {
         private static readonly string DataPath = Path.Combine(
             AppDomain.CurrentDomain.BaseDirectory,
