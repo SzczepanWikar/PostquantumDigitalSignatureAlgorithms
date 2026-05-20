@@ -49,7 +49,7 @@ namespace SphincsPlus.Algorithms.Operations
 
             var (idxTree, idxLeaf, md) = _commonOperations.ExtractData(m, pk.PkSeed, pk.PkRoot, r);
 
-            Adrs adrs = _commonOperations.CreateForsTreeAdress(idxTree, idxLeaf);
+            Adrs adrs = _commonOperations.CreateForsTreeAddress(idxTree, idxLeaf);
 
             byte[] pkFors = _fors.PkFromSig(sigFors, md, pk.PkSeed, adrs);
 

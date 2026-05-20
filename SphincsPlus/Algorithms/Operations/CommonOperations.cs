@@ -49,7 +49,7 @@ namespace SphincsPlus.Algorithms.Operations
         /// Constructs a FORS_TREE address with the given tree index and key-pair (leaf) address.
         /// Used to derive the shared ADRS context passed to FORS signing and verification.
         /// </summary>
-        public Adrs CreateForsTreeAdress(ulong idxTree, int idxLeaf)
+        public Adrs CreateForsTreeAddress(ulong idxTree, int idxLeaf)
         {
             Adrs adrs = new(ByteConversions.ToByte(0, 32));
 
