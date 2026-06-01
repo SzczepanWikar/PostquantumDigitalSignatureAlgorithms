@@ -45,5 +45,9 @@ dotnet test DilithiumTests/DilithiumTests.csproj
 dotnet test SphincsPlusTests/SphincsPlusTests.csproj
 ```
 
+## Thesis Version
+
+The branch [`state_in_thesis`](../../tree/state_in_thesis) contains the version of the implementation described in the master's thesis.
+
 ## Disclaimer
 This project is created for educational purposes only. The implementations provided here are not intended for production use and should not be used in real-world applications. The author assumes no responsibility for any consequences arising from the use of this code.
